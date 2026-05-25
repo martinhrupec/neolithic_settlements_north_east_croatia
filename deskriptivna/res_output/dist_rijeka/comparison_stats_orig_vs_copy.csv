@@ -1,0 +1,9 @@
+﻿sloj,n_orig,median_orig,mean_orig,n_copy,median_copy,mean_copy,delta_median,delta_mean
+random_ceste_biased,274,808.98,1026.67,274,779.12,1011.03,-29.86,-15.64
+nasumicni_lokaliteti_umjetno_generirani,274,899.22,1188.29,274,881.58,1146.62,-17.64,-41.67
+neolitik_svi_odredeni,274,524.57,848.07,274,436.84,709.84,-87.73,-138.23
+neolitik_c_starcevacka,137,569.1,886.08,137,421.24,638.16,-147.86,-247.92
+neolitik_c_sop_kor_len,191,546.61,896.06,191,426.81,732.76,-119.8,-163.3
+kontinuirana_naselja,54,755.06,1114.26,54,406.54,609.06,-348.52,-505.2
+samo_rani,83,512.04,737.62,83,452.09,657.09,-59.95,-80.53
+samo_srednji_kasni,137,445.42,810.06,137,445.42,781.52,0.0,-28.54
