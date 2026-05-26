@@ -1,0 +1,27 @@
+varijabla,tip,test,n_neolitik,background_source,statistika,p_value,p_bonferroni,znacajnost_005,znacajnost_005_bonf,effect_name,effect_value,effect_interp,smjer
+aps_vis,kontinuirana,KS_1samp_weighted,274,background_elev.csv,0.18269250895039002,1.7814725994712377e-08,4.631828758625218e-07,True,True,VDA_weighted,0.4243996215076927,mali,manje u neolitiku
+rel_vis_100_250,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.22262773722627738,2.314712800017443e-06,6.018253280045351e-05,True,True,VDA,0.6274908093132292,mali,vise u neolitiku
+rel_vis_100_500,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.15328467153284672,0.0031561998194150316,0.08206119530479082,True,False,VDA,0.5855000266396718,mali,vise u neolitiku
+rel_vis_100_1000,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.08759124087591241,0.2442247923346465,1.0,False,False,VDA,0.5332862699131548,zanemariv,vise u neolitiku
+rel_vis_200_500,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.09854014598540146,0.13984630231636735,1.0,False,False,VDA,0.5491635143055038,zanemariv,vise u neolitiku
+rel_vis_200_1000,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.06934306569343066,0.5261231799296341,1.0,False,False,VDA,0.5022177526772871,zanemariv,vise u neolitiku
+rel_vis_500_1000,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.10583941605839416,0.0928825124716707,1.0,False,False,VDA,0.4666671106611966,zanemariv,manje u neolitiku
+aspect_cat4,kategorijska,chi2_GoF,60,background_aspect.csv (rebinned),18.199819936515876,0.000400020443423808,0.010400531529019008,True,True,CramersV,0.31797816081992414,srednji,
+aspect_ew,kategorijska,chi2_GoF,60,background_aspect.csv (rebinned),2.617684421139088,0.10567855428978487,1.0,False,False,CramersV,0.2088733436455008,mali,
+aspect_sn,kategorijska,chi2_GoF,60,background_aspect.csv (rebinned),13.618559117610623,0.00022396050480607158,0.005822973124957861,True,True,CramersV,0.47641996735392017,srednji,
+nagib,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.11313868613138686,0.05988890553076099,1.0,False,False,VDA,0.44478262027811827,zanemariv,manje u neolitiku
+coarse_fragments,kontinuirana,KS_1samp_weighted,274,background_cfrag.csv,0.1182455666761254,0.0008537561695244405,0.022197660407635454,True,True,VDA_weighted,0.4138855827310243,mali,manje u neolitiku
+vtt_r100,kategorijska,chi2_GoF,274,background_vtt.csv,20.91195322044067,0.034294805082191536,0.89166493213698,True,False,CramersV,0.08329629324661832,zanemariv,
+vtt_r250,kategorijska,chi2_GoF,274,background_vtt.csv,18.209525173305625,0.0768444980977059,1.0,False,False,CramersV,0.07772803464671985,zanemariv,
+vtt_r500,kategorijska,chi2_GoF,274,background_vtt.csv,16.488850366646,0.12393070572920495,1.0,False,False,CramersV,0.07396454065026818,zanemariv,
+vtt_r1000,kategorijska,chi2_GoF,274,background_vtt.csv,17.69307208839901,0.08898112796265087,1.0,False,False,CramersV,0.07661785680605028,zanemariv,
+sm_r100,kategorijska,chi2_GoF,274,background_sm.csv,13.98228455778181,0.0001845412428585897,0.004798072314323332,True,True,CramersV,0.22589872866473235,mali,
+sm_r250,kategorijska,chi2_GoF,274,background_sm.csv,11.375312827358968,0.0007442668927348512,0.01935093921110613,True,True,CramersV,0.20375411712609798,mali,
+sm_r500,kategorijska,chi2_GoF,274,background_sm.csv,8.317375483300905,0.003926761592790517,0.10209580141255345,True,False,CramersV,0.1742279684079188,mali,
+sm_r1000,kategorijska,chi2_GoF,274,background_sm.csv,9.037071430404094,0.002645591097811682,0.06878536854310373,True,False,CramersV,0.18160950558746358,mali,
+dist_rijeka,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.21897810218978103,3.6234990093730996e-06,9.421097424370059e-05,True,True,VDA,0.3851963343811604,mali,manje u neolitiku
+dist_rijeka_korig,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.2664233576642336,5.855591076379667e-09,1.5224536798587134e-07,True,True,VDA,0.3492061377803825,srednji,manje u neolitiku
+gustoca_rijeka_1000,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.17518248175182483,0.00043351140897211044,0.011271296633274872,True,True,VDA,0.5905216047738292,mali,vise u neolitiku
+gustoca_rijeka_2000,kontinuirana,KS_2samp,274,potpuno_nasumicni_fallback (n=274),0.1678832116788321,0.0008657664087669505,0.022509926627940713,True,True,VDA,0.5570355373221801,zanemariv,vise u neolitiku
+strahler,ordinalna,chi2_GoF,274,background_strahler.csv,36.432553611112716,2.2711954710367313e-06,5.9051082246955016e-05,True,True,CliffsDelta,-0.10759070078393629,zanemariv,nizi red u neolitiku
+tri,kontinuirana,KS_1samp_weighted,274,background_tri.csv,0.18371876074769514,1.4443866245736759e-08,3.755405223891557e-07,True,True,VDA_weighted,0.43778973436167373,mali,manje u neolitiku
