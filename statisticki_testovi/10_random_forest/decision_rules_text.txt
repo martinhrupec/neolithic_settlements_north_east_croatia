@@ -1,0 +1,38 @@
+Surrogate decision tree za OPTIMALNI_5 model
+Fidelity (slaganje s RF-om): 0.763
+Maksimalna dubina: 4
+
+|--- dist_rijeka_korig <= 898.21
+|   |--- vtt_r100_Fluvisols <= 0.50
+|   |   |--- vtt_r100_Gleysols <= 0.50
+|   |   |   |--- aps_vis <= 179.59
+|   |   |   |   |--- class: 1
+|   |   |   |--- aps_vis >  179.59
+|   |   |   |   |--- class: 1
+|   |   |--- vtt_r100_Gleysols >  0.50
+|   |   |   |--- rel_vis_100_250 <= 0.49
+|   |   |   |   |--- class: 0
+|   |   |   |--- rel_vis_100_250 >  0.49
+|   |   |   |   |--- class: 1
+|   |--- vtt_r100_Fluvisols >  0.50
+|   |   |--- aps_vis <= 89.85
+|   |   |   |--- class: 0
+|   |   |--- aps_vis >  89.85
+|   |   |   |--- class: 0
+|--- dist_rijeka_korig >  898.21
+|   |--- rel_vis_100_250 <= -0.32
+|   |   |--- strahler <= 1.50
+|   |   |   |--- class: 0
+|   |   |--- strahler >  1.50
+|   |   |   |--- class: 0
+|   |--- rel_vis_100_250 >  -0.32
+|   |   |--- aps_vis <= 100.44
+|   |   |   |--- dist_rijeka_korig <= 2038.12
+|   |   |   |   |--- class: 1
+|   |   |   |--- dist_rijeka_korig >  2038.12
+|   |   |   |   |--- class: 0
+|   |   |--- aps_vis >  100.44
+|   |   |   |--- rel_vis_100_250 <= 3.90
+|   |   |   |   |--- class: 0
+|   |   |   |--- rel_vis_100_250 >  3.90
+|   |   |   |   |--- class: 1

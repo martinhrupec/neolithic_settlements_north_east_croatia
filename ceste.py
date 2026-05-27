@@ -35,12 +35,24 @@ GRID_ROAD_DENSITY       = "gustoca_cesta_km_ceste_po_km2_grida"     # <- km cest
 GRID_SETTLEMENT_DENSITY = "gustoca_nalazista_po_km2" # <- nalazišta / km²
 
 # --- C) Parcijalna korelacija ---
-# Skripta će izračunati % ćelije koji je Gleysol ili Fluvisol i dodati ga na grid.
+# Skripta ce izracunati % celije koji je Gleysol ili Fluvisol i dodati ga na grid.
 # Mora biti isti WRB raster kao u tlo.py.
 SOIL_RASTER_LAYER  = "tipovi_tla"   # <- naziv rasterskog sloja tla
 GLEYSOLS_VALUE     = 12             # <- rasterska vrijednost Gleysola
 FLUVISOLS_VALUE    = 11             # <- rasterska vrijednost Fluvisola
 GRID_WETSOIL_FIELD = "pct_mocvara"  # <- naziv novog atributa koji se dodaje na grid
+
+# --- D) Parcijalna korelacija s terenom (TRI i/ili nadmorska visina) ---
+# Pokretanje:
+#   1. add_terrain_mean_to_grid("tri_raster",  "mean_tri",  1)
+#   2. add_terrain_mean_to_grid("dem_raster",  "mean_elev", 1)
+#   3. run_partial_correlation_terrain()
+#
+# Nazive slojeva prilagodi svom QGIS projektu:
+TRI_RASTER_LAYER   = "TRI"      # <- naziv TRI rastera u projektu
+DEM_RASTER_LAYER   = "nadmorska_visina"      # <- naziv DEM rastera u projektu
+GRID_TRI_FIELD     = "mean_tri"     # <- atribut koji ce biti dodan na grid
+GRID_ELEV_FIELD    = "mean_elev"    # <- atribut koji ce biti dodan na grid
 
 # ============================================================
 #  POMOĆNE FUNKCIJE - STATISTIKA
@@ -454,12 +466,166 @@ def run_partial_correlation():
 
 
 # ============================================================
-#  D) GENERIRANJE CESTE-BIASED RANDOM TOČAKA
+#  D) DODAJ SREDNJU VRIJEDNOST RASTERA NA GRID (zonalna statistika)
+# ============================================================
+
+def add_terrain_mean_to_grid(raster_layer_name, grid_field_name, band=1):
+    """
+    Za svaku celiju grida izracuna srednju vrijednost piksel rastera
+    (npr. TRI ili nadmorska visina) i doda je kao novi atribut grida.
+
+    Pokretanje:
+        add_terrain_mean_to_grid("tri_25m",  "mean_tri",  1)
+        add_terrain_mean_to_grid("dem_25m",  "mean_elev", 1)
+
+    Nakon toga pokreni run_partial_correlation_terrain().
+    """
+    import processing
+    from qgis.core import QgsField
+    from PyQt5.QtCore import QVariant
+
+    grid   = get_layer(GRID_LAYER)
+    raster = get_layer(raster_layer_name)
+
+    if grid.crs() != raster.crs():
+        print(f"UPOZORENJE: CRS grida i rastera '{raster_layer_name}' se ne podudaraju!")
+
+    print(f"Racunam zonalnu srednju vrijednost rastera '{raster_layer_name}'...")
+
+    prefix = "_zt_"
+    result = processing.run("native:zonalstatisticsfb", {
+        "INPUT":         grid,
+        "INPUT_RASTER":  raster,
+        "RASTER_BAND":   band,
+        "COLUMN_PREFIX": prefix,
+        "STATISTICS":    [2],     # 2 = mean
+        "OUTPUT":        "memory:terrain_zonal",
+    })["OUTPUT"]
+
+    mean_field = prefix + "mean"
+
+    # Kopiraj vrijednosti natrag na originalni grid sloj
+    grid.startEditing()
+    if grid.fields().indexFromName(grid_field_name) == -1:
+        grid.addAttribute(QgsField(grid_field_name, QVariant.Double))
+    grid.updateFields()
+    idx = grid.fields().indexFromName(grid_field_name)
+
+    fid_list   = [f.id() for f in grid.getFeatures()]
+    res_feats   = list(result.getFeatures())
+
+    if len(fid_list) != len(res_feats):
+        print(f"  GRESKA: broj znacajki grida ({len(fid_list)}) != "
+              f"broj rezultata ({len(res_feats)})")
+        grid.rollBack()
+        return
+
+    for gfid, rfeat in zip(fid_list, res_feats):
+        val = rfeat[mean_field]
+        if val is not None and val == val:
+            grid.changeAttributeValue(gfid, idx, float(val))
+
+    grid.commitChanges()
+    print(f"  Atribut '{grid_field_name}' dodan na grid.")
+    print()
+
+
+# ============================================================
+#  E) PARCIJALNA KORELACIJA S TERENOM  (TRI i visina)
+# ============================================================
+
+def run_partial_correlation_terrain():
+    """
+    Parcijalna Spearman korelacija: ceste <-> naselja | kontrolna varijabla terena.
+
+    Testira se:
+      (1) ceste <-> naselja | mean_tri   (kontrola: hrapavost terena)
+      (2) ceste <-> naselja | mean_elev  (kontrola: nadmorska visina)
+      (3) ceste <-> naselja | mean_tri + mean_elev  (obje zajedno)
+
+    Interpretacija:
+      Ako r pada >0.10 i postaje neznacajan: teren objasnjava ceste-nalazista vezu
+        -> road bias je posredovan terenom, a ne cista istrazivacka pristranost
+      Ako r pada malo (<0.05): teren ne objasnjava bias
+        -> sampling bias je realan i neovisan o terenu
+
+    Preduvjet: pokreni jednom:
+        add_terrain_mean_to_grid(TRI_RASTER_LAYER,  GRID_TRI_FIELD,  1)
+        add_terrain_mean_to_grid(DEM_RASTER_LAYER,  GRID_ELEV_FIELD, 1)
+    """
+    print("=" * 65)
+    print("E) PARCIJALNA KORELACIJA: ceste <-> naselja | teren")
+    print("=" * 65)
+
+    grid = get_layer(GRID_LAYER)
+
+    road_vals, sett_vals, tri_vals, elev_vals = [], [], [], []
+    n_skip = 0
+
+    for feat in grid.getFeatures():
+        r  = feat[GRID_ROAD_DENSITY]
+        s  = feat[GRID_SETTLEMENT_DENSITY]
+        t  = feat[GRID_TRI_FIELD]
+        e  = feat[GRID_ELEV_FIELD]
+        if any(v is None or v != v for v in [r, s, t, e]):
+            n_skip += 1
+            continue
+        road_vals.append(float(r))
+        sett_vals.append(float(s))
+        tri_vals.append(float(t))
+        elev_vals.append(float(e))
+
+    n = len(road_vals)
+    print(f"\n  Celije s kompletnim podacima: {n}  (preskoceno: {n_skip})")
+
+    if n < 15:
+        print("  GRESKA: Premalo celija. Provjeri jesu li atributi dodani na grid.")
+        return
+
+    # Referentna korelacija (bez kontrole)
+    r0, p0 = spearman(road_vals, sett_vals)
+
+    print(f"\n  Referentna Spearman (bez kontrole): {interpret_r(r0, p0)}")
+    print()
+
+    scenarios = [
+        ("| mean_tri",          [tri_vals]),
+        ("| mean_elev",         [elev_vals]),
+        ("| mean_tri + elev",   [tri_vals, elev_vals]),
+    ]
+
+    for label, controls in scenarios:
+        rp, pp = partial_correlation(road_vals, sett_vals, *controls)
+        delta  = abs(r0) - abs(rp)
+        print(f"  Parcijalna r {label:<25s}: {interpret_r(rp, pp)}")
+        print(f"    Pad |r|: {abs(r0):.3f} -> {abs(rp):.3f}  (delta = {delta:.3f})")
+
+        if delta > 0.10 and pp >= 0.05:
+            print("    INTERPRETACIJA: Teren objasnjava ceste<->nalazista vezu.")
+            print("      Road bias je posredovan tipom krajolika, a ne istrazivackom")
+            print("      pristranoscu. Korelacija je artefakt geomorfologije.")
+        elif delta > 0.10 and pp < 0.05:
+            print("    INTERPRETACIJA: Teren DJELOMICNO objasnjava vezu, no korelacija")
+            print("      ostaje znacajna -> i teren I sampling bias doprinose signalu.")
+        elif delta <= 0.05 and pp < 0.05:
+            print("    INTERPRETACIJA: Teren ne objasnjava vezu ceste<->nalazista.")
+            print("      Sampling bias je realan i NEZAVISAN od terena.")
+        else:
+            print("    INTERPRETACIJA: Blagi pad, ali veza ostaje znacajna.")
+        print()
+
+    print("  SAVJET: Ako svi scenariji pokazuju mali pad (delta<0.05),")
+    print("  to ucvrsuje zakljucak da je road bias istrazivacki, a ne krajobrazni.")
+    print()
+
+
+# ============================================================
+#  F) GENERIRANJE CESTE-BIASED RANDOM TOCAKA
 # ============================================================
 #
-# Generira N točaka čija je vjerojatnost smještaja u ćeliji grida
-# proporcionalna gustoći cesta u toj ćeliji.
-# Interpretacija: "gdje bi nasumični istraživač pronašao nalazišta
+# Generira N tocaka cija je vjerojatnost smjestaja u celiji grida
+# proporcionalna gustoci cesta u toj celiji.
+# Interpretacija: "gdje bi nasumicni istrazivac pronasao nalazista
 # kad bi mu pristupačnost bila jedini faktor".
 #
 # Workflow:
@@ -572,6 +738,13 @@ def generate_road_biased_random():
 # run_point_analysis()
 # run_grid_analysis()
 
+# --- Novi workflow: parcijalna korelacija s terenom ---
+# Korak 1: dodaj terenske atribute na grid (jedanput)
+#   add_terrain_mean_to_grid(TRI_RASTER_LAYER,  GRID_TRI_FIELD,  1)
+#   add_terrain_mean_to_grid(DEM_RASTER_LAYER,  GRID_ELEV_FIELD, 1)
+# Korak 2: pokreni analizu
+#   run_partial_correlation_terrain()
+
 '''
 =================================================================
 A) TOČKASTA ANALIZA: ceste oko naselja vs. nasumičnih točaka
@@ -631,4 +804,36 @@ C) PARCIJALNA KORELACIJA: ceste ↔ naselja | % mocvarnog tla
   INTERPRETACIJA: Mocvara ne mijenja vezu ceste↔naselja →
   sampling bias je dominantan, krajobraz ga ne objašnjava.
 '''
-generate_road_biased_random()
+# generate_road_biased_random()
+# add_terrain_mean_to_grid("TRI",  "mean_tri",  1)   # TRI raster
+# add_terrain_mean_to_grid("nadmorska_visina",  "mean_elev",  1)   # DEM raster
+
+run_partial_correlation_terrain()
+
+"""
+=================================================================
+
+E) PARCIJALNA KORELACIJA: ceste <-> naselja | teren
+=================================================================
+
+  Celije s kompletnim podacima: 164  (preskoceno: 0)
+
+  Referentna Spearman (bez kontrole):   r = +0.454  p = 9.08e-11  → umjerena pozitivna korelacija, značajna
+
+  Parcijalna r | mean_tri               :   r = +0.353  p = 1.58e-06  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.353  (delta = 0.101)
+    INTERPRETACIJA: Teren DJELOMICNO objasnjava vezu, no korelacija
+      ostaje znacajna -> i teren I sampling bias doprinose signalu.
+
+  Parcijalna r | mean_elev              :   r = +0.354  p = 1.40e-06  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.354  (delta = 0.099)
+    INTERPRETACIJA: Blagi pad, ali veza ostaje znacajna.
+
+  Parcijalna r | mean_tri + elev        :   r = +0.353  p = 1.55e-06  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.353  (delta = 0.101)
+    INTERPRETACIJA: Teren DJELOMICNO objasnjava vezu, no korelacija
+      ostaje znacajna -> i teren I sampling bias doprinose signalu.
+
+  SAVJET: Ako svi scenariji pokazuju mali pad (delta<0.05),
+  to ucvrsuje zakljucak da je road bias istrazivacki, a ne krajobrazni.
+"""

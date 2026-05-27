@@ -1,0 +1,5 @@
+model,n_params,log_lik,McFadden_R2,Nagelkerke_R2,LR_vs_null,df_vs_null,p_vs_null
+Null,1,-379.8447,0.0,0.0,0.0,0,
+Terrain,3,-370.3296,0.025,0.0455,19.03,2,7.4e-05
+Soil,7,-349.3586,0.0803,0.1404,60.972,6,0.0
+Full,9,-332.5282,0.1246,0.2115,94.633,8,0.0

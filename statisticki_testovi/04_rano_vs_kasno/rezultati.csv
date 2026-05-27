@@ -1,0 +1,27 @@
+varijabla,tip,test,n_rano,n_kasno,statistika,p_value,p_bonferroni,znacajnost_005,znacajnost_005_bonf,effect_name,effect_value,effect_interp,smjer
+aps_vis,kontinuirana,KS_2samp,83,137,0.2492304986368833,0.0025162030866164964,0.06542128025202891,True,False,VDA,0.6372350716735555,mali,vise u rano
+rel_vis_100_250,kontinuirana,KS_2samp,83,137,0.09858411749186527,0.649165103376279,1.0,False,False,VDA,0.5087503297862985,zanemariv,vise u rano
+rel_vis_100_500,kontinuirana,KS_2samp,83,137,0.1432591680590977,0.21262840732303392,1.0,False,False,VDA,0.5454665376835811,zanemariv,vise u rano
+rel_vis_100_1000,kontinuirana,KS_2samp,83,137,0.1575059361533726,0.1348833231294728,1.0,False,False,VDA,0.5361885498197168,zanemariv,vise u rano
+rel_vis_200_500,kontinuirana,KS_2samp,83,137,0.1202180986720605,0.4037410458983823,1.0,False,False,VDA,0.5409374725178085,zanemariv,vise u rano
+rel_vis_200_1000,kontinuirana,KS_2samp,83,137,0.12426347726673116,0.3639992067775026,1.0,False,False,VDA,0.534517632574092,zanemariv,vise u rano
+rel_vis_500_1000,kontinuirana,KS_2samp,83,137,0.1140620877671269,0.4685462342982327,1.0,False,False,VDA,0.5145985401459854,zanemariv,vise u rano
+aspect_cat4,kategorijska,chi2_2samp,20,24,2.370129462041227,0.4992192335058975,1.0,False,False,CramersV,0.2320917462615919,mali,
+aspect_ew,kategorijska,chi2_2samp,20,24,0.0,1.0,1.0,False,False,CramersV,0.0,zanemariv,
+aspect_sn,kategorijska,chi2_2samp,20,24,0.007857142857142894,0.9293675997064149,1.0,False,False,CramersV,0.01336306209562125,zanemariv,
+nagib,kontinuirana,KS_2samp,83,137,0.06578137366986193,0.9642330159729975,1.0,False,False,VDA,0.5362764928326444,zanemariv,vise u rano
+coarse_fragments,kontinuirana,KS_2samp,83,137,0.19505760267346758,0.03305108746979787,0.8593282742147446,True,False,VDA,0.6168762641808109,mali,vise u rano
+vtt_r100,kategorijska,chi2_2samp,83,137,0.47256545396809324,0.9248759728377869,1.0,False,False,CramersV,0.04634678835436238,zanemariv,
+vtt_r250,kategorijska,chi2_2samp,83,137,1.18190143915387,0.7573482863773658,1.0,False,False,CramersV,0.07329583391217558,zanemariv,
+vtt_r500,kategorijska,chi2_2samp,83,137,1.3943519589521245,0.7068591960026989,1.0,False,False,CramersV,0.07961132739618391,zanemariv,
+vtt_r1000,kategorijska,chi2_2samp,83,137,1.9085414929606628,0.5916044945934411,1.0,False,False,CramersV,0.09314069252677183,zanemariv,
+sm_r100,kategorijska,chi2_2samp,83,137,0.029339951058622374,0.8639964615778348,1.0,False,False,CramersV,0.01154830783720407,zanemariv,
+sm_r250,kategorijska,chi2_2samp,83,137,0.05855860373238386,0.808788802593329,1.0,False,False,CramersV,0.016314884967747575,zanemariv,
+sm_r500,kategorijska,chi2_2samp,83,137,0.4464714944435906,0.5040153657632029,1.0,False,False,CramersV,0.04504903865605239,zanemariv,
+sm_r1000,kategorijska,chi2_2samp,83,137,0.20431771201272525,0.6512580554640384,1.0,False,False,CramersV,0.030474856403026985,zanemariv,
+dist_rijeka,kontinuirana,KS_2samp,83,137,0.12399964822794829,0.36598656395077,1.0,False,False,VDA,0.49476739073080644,zanemariv,vise u kasno
+dist_rijeka_korig,kontinuirana,KS_2samp,83,137,0.1455456863952159,0.1978534637854666,1.0,False,False,VDA,0.4793773634684724,zanemariv,vise u kasno
+gustoca_rijeka_1000,kontinuirana,KS_2samp,83,137,0.10720253275877231,0.5465277129903637,1.0,False,False,VDA,0.5208864655703104,zanemariv,vise u rano
+gustoca_rijeka_2000,kontinuirana,KS_2samp,83,137,0.06938703719989447,0.9445272219886649,1.0,False,False,VDA,0.5001319145193914,zanemariv,vise u rano
+strahler,ordinalna,chi2_2samp,83,137,11.158395506426475,0.04832835457664978,1.0,True,False,CliffsDelta,0.14141236478761754,zanemariv,visi red u rano
+tri,kontinuirana,KS_2samp,83,137,0.1210095857884091,0.3955492893093068,1.0,False,False,VDA,0.5572948729223464,zanemariv,vise u rano

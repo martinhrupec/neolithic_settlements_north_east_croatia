@@ -1,0 +1,12 @@
+Spatial Coherence Check — OPTIMALNI_5 model
+============================================================
+
+n_total = 548
+OOF AUC = 0.7238
+
+Neolitik   mean pred_prob = 0.5888
+Random_C   mean pred_prob = 0.4202
+Razlika u srednjim         = 0.1686
+
+Moran's I na pred_prob   = 0.3427  (p = 0.0010)
+Misklasifikacije (prag 0.5) = 189 / 548

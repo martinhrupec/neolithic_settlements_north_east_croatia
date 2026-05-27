@@ -1,0 +1,12 @@
+klaster_id,n_varijabli,clanovi,predlozeni,razlog
+1,4,"rel_vis_100_500, rel_vis_100_1000, rel_vis_200_500, rel_vis_200_1000",rel_vis_100_500,default (prva u klasteru)
+2,1,rel_vis_100_250,rel_vis_100_250,robusna (univariate rel_vis_100_250)
+3,1,rel_vis_500_1000,rel_vis_500_1000,samostalna
+4,2,"aspect_cat4, aspect_ew",aspect_cat4,default (prva u klasteru)
+5,1,aspect_sn,aspect_sn,samostalna
+6,4,"dist_rijeka, dist_rijeka_korig, gustoca_rijeka_1000, gustoca_rijeka_2000",dist_rijeka_korig,robusna (univariate dist_rijeka_korig)
+7,1,strahler,strahler,robusna (univariate strahler)
+8,8,"vtt_r100, vtt_r250, vtt_r500, vtt_r1000, sm_r100, sm_r250, sm_r500, sm_r1000",vtt_r100,robusna (univariate vtt_r100)
+9,2,"nagib, tri",nagib,default (prva u klasteru)
+10,1,aps_vis,aps_vis,samostalna
+11,1,coarse_fragments,coarse_fragments,samostalna

@@ -1,0 +1,12 @@
+varijabla,tip,n,Moran_I,p_value,znacajno,jacina,smjer,mozda_artefakt
+aspect_sn,binarna,60,0.3782,0.003,True,jak,klasteriran (slicne vrijednosti su prostorno blizu),True
+aspect_cat4 = NE,binarna (indikator),60,0.4309,0.001,True,jak,klasteriran (slicne vrijednosti su prostorno blizu),True
+aspect_cat4 = SE,binarna (indikator),60,0.1283,0.283,False,umjeren,klasteriran (slicne vrijednosti su prostorno blizu),False
+aspect_cat4 = SW,binarna (indikator),60,0.3164,0.012,True,jak,klasteriran (slicne vrijednosti su prostorno blizu),True
+aspect_cat4 = NW,binarna (indikator),60,0.2693,0.014,True,umjeren,klasteriran (slicne vrijednosti su prostorno blizu),True
+nagib,kontinuirana,274,0.1733,0.001,True,umjeren,klasteriran (slicne vrijednosti su prostorno blizu),True
+tri,kontinuirana,274,0.191,0.001,True,umjeren,klasteriran (slicne vrijednosti su prostorno blizu),True
+coarse_fragments,kontinuirana,274,0.4123,0.001,True,jak,klasteriran (slicne vrijednosti su prostorno blizu),True
+rel_vis_100_250,kontinuirana,274,0.2858,0.001,True,umjeren,klasteriran (slicne vrijednosti su prostorno blizu),True
+sm_r100,binarna,274,0.3596,0.001,True,jak,klasteriran (slicne vrijednosti su prostorno blizu),True
+sm_r250,binarna,274,0.3674,0.001,True,jak,klasteriran (slicne vrijednosti su prostorno blizu),True
