@@ -1,0 +1,40 @@
+{
+  "dem_path": "D:/arheologija/transformirani_slojevi/nadmorska_visina.tif",
+  "out_dir": "C:\\Users\\Martin\\Desktop\\skripte_za_diplomski\\12_heatmap_qgis\\rasters",
+  "shape": [
+    5238,
+    7021
+  ],
+  "geotransform": [
+    556275.0,
+    25.0,
+    0.0,
+    5101350.0,
+    0.0,
+    -25.0
+  ],
+  "projection": "PROJCS[\"HTRS96 / Croatia TM\",GEOGCS[\"HTRS96\",DATUM[\"Croatian_Terrestrial_Reference_System\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6761\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4761\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",16.5],PARAMETER[\"scale_factor\",0.9999],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"3765\"]]",
+  "res_x": 25.0,
+  "res_y": 25.0,
+  "soil_types": {
+    "2": "Alisols",
+    "4": "Arenosols",
+    "5": "Calcisols",
+    "6": "Cambisols",
+    "7": "Chernozems",
+    "11": "Fluvisols",
+    "12": "Gleysols",
+    "16": "Leptosols",
+    "18": "Luvisols",
+    "20": "Pheozems",
+    "24": "Regosols",
+    "29": "Vertisols"
+  },
+  "files": {
+    "rel_vis_100_250": "rel_vis_100_250.tif",
+    "vtt_r100": "vtt_r100.tif",
+    "dist_rijeka_korig": "dist_rijeka_korig.tif",
+    "strahler": "strahler.tif",
+    "aps_vis": "D:/arheologija/transformirani_slojevi/nadmorska_visina.tif"
+  }
+}

@@ -1,0 +1,5 @@
+fold,n_train,n_test,n_train_neo,n_test_neo,train_auc,test_auc,test_f1,test_acc,overfit_gap
+trained_N_test_S,274,274,134,140,0.9997,0.6928,0.6103,0.6131,0.3069
+trained_S_test_N,274,274,140,134,0.9973,0.6378,0.6048,0.5803,0.3595
+trained_E_test_W,274,274,155,119,0.9926,0.6922,0.64,0.6058,0.3004
+trained_W_test_E,274,274,119,155,0.9924,0.6965,0.6084,0.6241,0.2959

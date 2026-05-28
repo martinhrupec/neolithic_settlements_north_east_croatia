@@ -1,0 +1,47 @@
+SHAP per-cluster summary
+============================================================
+
+
+============================================================
+SOURCE: thr85_all    n_clustera = 1480
+============================================================
+  cid=1290  p=0.99  area=0.546 km2  dist_known=1952 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.254, dist_rijeka_korig=+0.094, vtt_r100 (tip tla)=+0.085
+  cid=1244  p=0.99  area=0.312 km2  dist_known=1575 m  (0 inside)  vtt=Luvisols
+    top3 doprinosi: rel_vis_100_250=+0.325, aps_vis=+0.084, dist_rijeka_korig=+0.074
+  cid=1304  p=0.99  area=0.036 km2  dist_known=68 m  (1 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.259, dist_rijeka_korig=+0.083, vtt_r100 (tip tla)=+0.081
+  cid=1272  p=0.99  area=0.344 km2  dist_known=637 m  (1 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.253, dist_rijeka_korig=+0.091, vtt_r100 (tip tla)=+0.081
+  cid=1201  p=0.99  area=0.734 km2  dist_known=790 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: dist_rijeka_korig=+0.124, vtt_r100 (tip tla)=+0.111, rel_vis_100_250=+0.079
+  cid=1111  p=0.99  area=1.023 km2  dist_known=136 m  (9 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.232, dist_rijeka_korig=+0.099, aps_vis=+0.087
+  cid=1296  p=0.99  area=0.126 km2  dist_known=2751 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.242, aps_vis=+0.083, vtt_r100 (tip tla)=+0.076
+  cid=1293  p=0.99  area=0.231 km2  dist_known=2233 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.163, dist_rijeka_korig=+0.125, vtt_r100 (tip tla)=+0.091
+  cid=1307  p=0.98  area=0.134 km2  dist_known=607 m  (0 inside)  vtt=Luvisols
+    top3 doprinosi: rel_vis_100_250=+0.321, dist_rijeka_korig=+0.078, aps_vis=+0.071
+  cid=1310  p=0.97  area=0.044 km2  dist_known=2083 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.252, aps_vis=+0.088, vtt_r100 (tip tla)=+0.076
+  cid=1237  p=0.97  area=0.892 km2  dist_known=1768 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: dist_rijeka_korig=+0.128, vtt_r100 (tip tla)=+0.116, rel_vis_100_250=+0.067
+  cid=1320  p=0.97  area=0.086 km2  dist_known=173 m  (1 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.226, vtt_r100 (tip tla)=+0.077, dist_rijeka_korig=+0.060
+  cid=1215  p=0.97  area=0.877 km2  dist_known=907 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: dist_rijeka_korig=+0.126, vtt_r100 (tip tla)=+0.112, rel_vis_100_250=+0.071
+  cid=1228  p=0.97  area=0.266 km2  dist_known=630 m  (1 inside)  vtt=Cambisols
+    top3 doprinosi: dist_rijeka_korig=+0.137, vtt_r100 (tip tla)=+0.117, rel_vis_100_250=+0.082
+  cid=1280  p=0.97  area=0.635 km2  dist_known=2540 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: dist_rijeka_korig=+0.134, vtt_r100 (tip tla)=+0.117, rel_vis_100_250=+0.059
+  cid=1332  p=0.97  area=0.024 km2  dist_known=564 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.231, aps_vis=+0.092, vtt_r100 (tip tla)=+0.074
+  cid=1219  p=0.97  area=0.282 km2  dist_known=1168 m  (1 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.213, aps_vis=+0.102, vtt_r100 (tip tla)=+0.088
+  cid=1301  p=0.96  area=0.283 km2  dist_known=1092 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: dist_rijeka_korig=+0.137, vtt_r100 (tip tla)=+0.118, rel_vis_100_250=+0.069
+  cid=1480  p=0.96  area=0.097 km2  dist_known=25871 m  (0 inside)  vtt=Luvisols
+    top3 doprinosi: rel_vis_100_250=+0.252, dist_rijeka_korig=+0.086, vtt_r100 (tip tla)=+0.042
+  cid= 490  p=0.96  area=0.040 km2  dist_known=1300 m  (0 inside)  vtt=Cambisols
+    top3 doprinosi: rel_vis_100_250=+0.254, vtt_r100 (tip tla)=+0.073, aps_vis=+0.055

@@ -1,0 +1,18 @@
+# Generated rasters from heatmap pipeline (too large for git)
+# Regeneriraju se pokretanjem 12_heatmap_qgis/01_prep_rasters.py + 02_predict_raster.py
+12_heatmap_qgis/rasters/*.tif
+12_heatmap_qgis/*.tif
+
+# QGIS auxiliary raster files
+*.tif.aux.xml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code / editori
+.vscode/
+*.swp
+*.bak

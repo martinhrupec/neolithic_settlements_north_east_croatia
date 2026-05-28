@@ -1,0 +1,175 @@
+SHAP Pattern Clustering Summary
+============================================================
+
+n_clustera_total = 1480
+Optimalni k = 5  (silhouette = 0.5007)
+
+Silhouette scores per k:
+  k=2: 0.4895
+  k=3: 0.4834
+  k=4: 0.4905
+  k=5: 0.5007   <- ODABRAN
+
+  INTERPRETACIJA: silhouette >= 0.50 -> jasne grupacije,
+  postoji jasna razdvojenost u SHAP prostoru.
+
+============================================================
+TIP 0    n = 384  (25.9% svih clustera)
+============================================================
+
+Prosjecni SHAP doprinosi:
+  vtt_r100              : +0.0713
+  rel_vis_100_250       : +0.2203
+  dist_rijeka_korig     : +0.1174
+  strahler              : +0.0099
+  aps_vis               : -0.0104
+
+  DOMINANTNI feature: rel_vis_100_250  (|mean|=0.2203)
+
+Prosjecne karakteristike clustera u tipu 0:
+  area_km2        : 0.045
+  prob_max        : 0.917
+  dist_to_known_m : 7847
+  n_known_inside  : 0.01
+
+Prosjecne feature vrijednosti unutar clustera tipa 0:
+  rel_vis_100_250  : +13.55  +/-  3.94   m
+  dist_rijeka_korig: 264  +/-  43   m
+  aps_vis          : 344  +/-  130   m
+  strahler distr.  : red 1: 360 (94%),  red 2: 18 (5%),  red 3: 6 (2%)
+
+Najcesce vtt_r100 vrijednosti (top 5):
+  Cambisols      :  382  ( 99.5%)
+  Luvisols       :    2  (  0.5%)
+
+Source distribucija (kojem source-u pripadaju):
+  thr85_all                :  384  (100.0%)
+
+============================================================
+TIP 1    n = 412  (27.8% svih clustera)
+============================================================
+
+Prosjecni SHAP doprinosi:
+  vtt_r100              : +0.1305
+  rel_vis_100_250       : +0.0622
+  dist_rijeka_korig     : +0.1258
+  strahler              : +0.0239
+  aps_vis               : +0.0342
+
+  DOMINANTNI feature: vtt_r100  (|mean|=0.1305)
+
+Prosjecne karakteristike clustera u tipu 1:
+  area_km2        : 0.049
+  prob_max        : 0.896
+  dist_to_known_m : 3440
+  n_known_inside  : 0.04
+
+Prosjecne feature vrijednosti unutar clustera tipa 1:
+  rel_vis_100_250  : +1.43  +/-  1.19   m
+  dist_rijeka_korig: 191  +/-  78   m
+  aps_vis          : 107  +/-  21   m
+  strahler distr.  : red 1: 188 (46%),  red 2: 126 (31%),  red 3: 97 (24%),  red 4: 1 (0%)
+
+Najcesce vtt_r100 vrijednosti (top 5):
+  Cambisols      :  412  (100.0%)
+
+Source distribucija (kojem source-u pripadaju):
+  thr85_all                :  412  (100.0%)
+
+============================================================
+TIP 2    n = 362  (24.5% svih clustera)
+============================================================
+
+Prosjecni SHAP doprinosi:
+  vtt_r100              : +0.0543
+  rel_vis_100_250       : +0.2594
+  dist_rijeka_korig     : +0.0590
+  strahler              : +0.0103
+  aps_vis               : -0.0155
+
+  DOMINANTNI feature: rel_vis_100_250  (|mean|=0.2594)
+
+Prosjecne karakteristike clustera u tipu 2:
+  area_km2        : 0.031
+  prob_max        : 0.878
+  dist_to_known_m : 6963
+  n_known_inside  : 0.00
+
+Prosjecne feature vrijednosti unutar clustera tipa 2:
+  rel_vis_100_250  : +14.28  +/-  3.75   m
+  dist_rijeka_korig: 546  +/-  152   m
+  aps_vis          : 339  +/-  146   m
+  strahler distr.  : red 1: 325 (90%),  red 2: 24 (7%),  red 3: 12 (3%),  red 7: 1 (0%)
+
+Najcesce vtt_r100 vrijednosti (top 5):
+  Cambisols      :  241  ( 66.6%)
+  Luvisols       :  119  ( 32.9%)
+  Gleysols       :    2  (  0.6%)
+
+Source distribucija (kojem source-u pripadaju):
+  thr85_all                :  362  (100.0%)
+
+============================================================
+TIP 3    n = 30  (2.0% svih clustera)
+============================================================
+
+Prosjecni SHAP doprinosi:
+  vtt_r100              : +0.0438
+  rel_vis_100_250       : +0.2830
+  dist_rijeka_korig     : +0.0611
+  strahler              : -0.0523
+  aps_vis               : +0.0641
+
+  DOMINANTNI feature: rel_vis_100_250  (|mean|=0.2830)
+
+Prosjecne karakteristike clustera u tipu 3:
+  area_km2        : 0.041
+  prob_max        : 0.915
+  dist_to_known_m : 6571
+  n_known_inside  : 0.00
+
+Prosjecne feature vrijednosti unutar clustera tipa 3:
+  rel_vis_100_250  : +8.84  +/-  2.70   m
+  dist_rijeka_korig: 349  +/-  205   m
+  aps_vis          : 124  +/-  16   m
+  strahler distr.  : red 4: 3 (10%),  red 6: 16 (53%),  red 7: 11 (37%)
+
+Najcesce vtt_r100 vrijednosti (top 5):
+  Luvisols       :   19  ( 63.3%)
+  Cambisols      :   11  ( 36.7%)
+
+Source distribucija (kojem source-u pripadaju):
+  thr85_all                :   30  (100.0%)
+
+============================================================
+TIP 4    n = 292  (19.7% svih clustera)
+============================================================
+
+Prosjecni SHAP doprinosi:
+  vtt_r100              : +0.0494
+  rel_vis_100_250       : +0.2248
+  dist_rijeka_korig     : +0.0530
+  strahler              : +0.0149
+  aps_vis               : +0.0464
+
+  DOMINANTNI feature: rel_vis_100_250  (|mean|=0.2248)
+
+Prosjecne karakteristike clustera u tipu 4:
+  area_km2        : 0.035
+  prob_max        : 0.909
+  dist_to_known_m : 5781
+  n_known_inside  : 0.07
+
+Prosjecne feature vrijednosti unutar clustera tipa 4:
+  rel_vis_100_250  : +7.28  +/-  1.31   m
+  dist_rijeka_korig: 448  +/-  240   m
+  aps_vis          : 126  +/-  20   m
+  strahler distr.  : red 1: 111 (38%),  red 2: 87 (30%),  red 3: 65 (22%),  red 4: 7 (2%),  red 7: 22 (8%)
+
+Najcesce vtt_r100 vrijednosti (top 5):
+  Luvisols       :  219  ( 75.0%)
+  Cambisols      :   48  ( 16.4%)
+  Gleysols       :   25  (  8.6%)
+
+Source distribucija (kojem source-u pripadaju):
+  thr85_all                :  292  (100.0%)
