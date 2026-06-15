@@ -23,5 +23,5 @@ dist_rijeka,kontinuirana,KS_2samp,220,54,0.14898989898989898,0.2597736114474235,
 dist_rijeka_korig,kontinuirana,KS_2samp,220,54,0.13400673400673402,0.3785000754501484,1.0,False,False,VDA,0.5199494949494947,zanemariv,vise u jednofaznim
 gustoca_rijeka_1000,kontinuirana,KS_2samp,220,54,0.16885521885521884,0.14802679080745568,1.0,False,False,VDA,0.5790404040404042,mali,vise u jednofaznim
 gustoca_rijeka_2000,kontinuirana,KS_2samp,220,54,0.22037037037037038,0.02455249167808998,0.6383647836303394,True,False,VDA,0.6194444444444442,mali,vise u jednofaznim
-strahler,ordinalna,chi2_2samp,220,54,2.3455309826747515,0.7995570303798083,1.0,False,False,CliffsDelta,-0.012121212121211644,zanemariv,visi red u kontinuiranim
+strahler,ordinalna,chi2_2samp,220,54,1.509394520587997,0.6801037834744681,1.0,False,False,CliffsDelta,-0.012121212121211644,zanemariv,visi red u kontinuiranim
 tri,kontinuirana,KS_2samp,220,54,0.2361952861952862,0.012857889107042221,0.33430511678309777,True,False,VDA,0.3964646464646464,mali,vise u kontinuiranim

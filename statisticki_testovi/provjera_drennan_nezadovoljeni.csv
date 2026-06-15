@@ -1,0 +1,8 @@
+﻿Usporedba;Varijabla;Prilagodba;Kategorije (ćelije);Broj ćelija;Najmanja očekivana frekvencija;Ćelije s očekivanom f. < 1;Ćelije s očekivanom f. < 5;Postotak ćelija s očekivanom f. < 5;Uvjet (a): nijedna očekivana f. < 1;Uvjet (b): najviše 20 % ćelija s očekivanom f. < 5;Oba uvjeta zadovoljena;p-vrijednost;Statistički značajno (p < 0,05)
+Usporedba III: ranoneolitička / kasnoneolitička;Ekspozicija (4 smjera);bez prilagodbe;NE | NW | SE | SW;8;2,73;0;4;50,0;DA;NE;NE;0,499;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Tip tla (radijus 100 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;2,26;0;2;25,0;DA;NE;NE;0,925;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Tip tla (radijus 250 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;2,64;0;2;25,0;DA;NE;NE;0,757;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Tip tla (radijus 500 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;2,26;0;2;25,0;DA;NE;NE;0,707;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Tip tla (radijus 1000 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;1,89;0;2;25,0;DA;NE;NE;0,592;NE
+Usporedba IV: jednofazna / kontinuirana;Ekspozicija (4 smjera);bez prilagodbe;NE | NW | SE | SW;8;2,13;0;3;37,5;DA;NE;NE;0,080;NE
+Usporedba IV: jednofazna / kontinuirana;Ekspozicija (sjever / jug);bez prilagodbe;N | S;4;4,53;0;1;25,0;DA;NE;NE;0,503;NE

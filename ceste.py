@@ -14,8 +14,15 @@ Dvije analize:
 Pokretanje: Otvori QGIS → Plugins → Python Console → Run Script
 """
 
-from qgis.core import QgsProject
 import math, statistics, os
+
+# QGIS je dostupan samo unutar QGIS Python okruženja. Izvan njega (npr. običan
+# Python za crtanje grafova iz CSV-a) import se preskače, pa rade plots_from_csv()
+# i ostale čiste funkcije, dok QGIS-funkcije jave jasnu grešku ako se pozovu.
+try:
+    from qgis.core import QgsProject
+except ModuleNotFoundError:
+    QgsProject = None
 
 # ============================================================
 #  POSTAVKE
@@ -59,6 +66,10 @@ GRID_ELEV_FIELD    = "mean_elev"    # <- atribut koji ce biti dodan na grid
 # ============================================================
 
 def get_layer(name):
+    if QgsProject is None:
+        raise RuntimeError(
+            "QGIS nije dostupan — ova funkcija radi samo u QGIS Python konzoli. "
+            "Izvan QGIS-a koristi plots_from_csv() na izvezenom CSV-u.")
     layers = QgsProject.instance().mapLayersByName(name)
     if not layers:
         raise ValueError(f"Sloj '{name}' nije pronađen!")
@@ -151,22 +162,234 @@ def pearson(x, y):
     return r, p
 
 
+def rankdata(data):
+    """Rangovi vrijednosti s prosječnim rangom za vezane vrijednosti (ties)."""
+    order = sorted(range(len(data)), key=lambda i: data[i])
+    ranks = [0.0] * len(data)
+    i = 0
+    while i < len(data):
+        j = i
+        while j < len(data) and data[order[j]] == data[order[i]]:
+            j += 1
+        avg = (i + j + 1) / 2.0           # prosjek rangova vezane skupine
+        for k in range(i, j):
+            ranks[order[k]] = avg
+        i = j
+    return ranks
+
+
 def spearman(x, y):
-    """Spearmanov rho i p-vrijednost."""
-    def rank(data):
-        order = sorted(range(len(data)), key=lambda i: data[i])
-        ranks = [0.0] * len(data)
-        i = 0
-        while i < len(data):
-            j = i
-            while j < len(data) and data[order[j]] == data[order[i]]:
-                j += 1
-            avg = (i + j + 1) / 2.0
-            for k in range(i, j):
-                ranks[order[k]] = avg
-            i = j
-        return ranks
-    return pearson(rank(x), rank(y))
+    """Spearmanov rho i p-vrijednost (= Pearson na rangovima)."""
+    return pearson(rankdata(x), rankdata(y))
+
+
+def _linfit(x, y):
+    """Najbolji pravac (OLS): vraća (a, b) za y = b*x + a."""
+    n = len(x)
+    mx, my = statistics.mean(x), statistics.mean(y)
+    sxx = sum((xi - mx) ** 2 for xi in x)
+    sxy = sum((x[i] - mx) * (y[i] - my) for i in range(n))
+    b = sxy / sxx if sxx else 0.0
+    a = my - b * mx
+    return a, b
+
+
+# --- zajednička paleta i pomoćne funkcije za grafove ---
+_C_PT  = "#2c7fb8"   # točke (sirove vrijednosti)
+_C_PTR = "#31a354"   # točke (rangovi)
+_C_RES = "#d7301f"   # reziduali
+
+
+def _save_or_show(fig, save_path):
+    import matplotlib.pyplot as plt
+    if save_path:
+        fig.savefig(save_path, dpi=150, bbox_inches="tight")
+        print(f"  Graf spremljen: {save_path}")
+        plt.close(fig)
+    else:
+        plt.show()
+    return fig
+
+
+def plot_total_variation(x, y, xlabel="X", ylabel="Y",
+                         title="Ukupna varijabilnost (nazivnik u r²)",
+                         save_path=None, ylim=None):
+    """
+    Graf 1 — vodoravni pravac y = ȳ + odstupanja svake točke od prosjeka.
+    Σ(y−ȳ)² je NAZIVNIK u r² ("najlošija moguća prilagodba"). Prati stvarne podatke.
+    """
+    import matplotlib.pyplot as plt
+    n  = len(x)
+    my = statistics.mean(y)
+    ss_tot = sum((yi - my) ** 2 for yi in y)
+
+    fig, ax = plt.subplots(figsize=(6.5, 5.5))
+    for i in range(n):
+        ax.plot([x[i], x[i]], [y[i], my], ls=":", color=_C_RES, lw=0.9, zorder=2)
+    ax.scatter(x, y, s=28, color=_C_PT, edgecolor="white", lw=0.4, zorder=3)
+    ax.axhline(my, color="black", lw=2, zorder=1, label=f"y = ȳ = {my:.2f}")
+    ax.set_title(f"{title}\n$\\Sigma(y-\\bar{{y}})^2$ = {ss_tot:.1f}")
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel)
+    ax.legend(loc="upper left", fontsize=9)
+    if ylim:
+        ax.set_ylim(*ylim)
+    fig.tight_layout()
+    return _save_or_show(fig, save_path)
+
+
+def plot_regression(x, y, xlabel="X", ylabel="Y",
+                    title="Pearsonova korelacija",
+                    save_path=None, ylim=None):
+    """
+    Graf 2 — najbolji pravac + reziduali do pravca. Σ(y−ŷ)² je BROJNIK u r².
+    Ispisuje Pearsonov r i r². Prati stvarne podatke.
+    """
+    import matplotlib.pyplot as plt
+    n  = len(x)
+    my = statistics.mean(y)
+    a, b = _linfit(x, y)
+    y_hat = [a + b * xi for xi in x]
+    ss_tot = sum((yi - my) ** 2 for yi in y)
+    ss_res = sum((y[i] - y_hat[i]) ** 2 for i in range(n))
+    r, _ = pearson(x, y)
+    r2 = 1 - ss_res / ss_tot if ss_tot else 0.0
+
+    fig, ax = plt.subplots(figsize=(6.5, 5.5))
+    xs = [min(x), max(x)]
+    for i in range(n):
+        ax.plot([x[i], x[i]], [y[i], y_hat[i]], ls=":", color=_C_RES, lw=0.9, zorder=2)
+    ax.scatter(x, y, s=28, color=_C_PT, edgecolor="white", lw=0.4, zorder=3)
+    ax.axhline(my, color="gray", lw=1, ls="--", alpha=0.6, zorder=1)
+    ax.plot(xs, [a + b * xs[0], a + b * xs[1]], color="black", lw=2, zorder=4,
+            label=f"y = {b:.3f}·x + {a:.2f}")
+    ax.set_title(f"{title}\n$\\Sigma(y-\\hat{{y}})^2$ = {ss_res:.1f}   "
+                 f"r = {r:+.3f}   r² = {r2:.3f}")
+    ax.set_xlabel(xlabel); ax.set_ylabel(ylabel)
+    ax.legend(loc="upper left", fontsize=9)
+    if ylim:
+        ax.set_ylim(*ylim)
+    fig.tight_layout()
+    return _save_or_show(fig, save_path)
+
+
+def plot_spearman_ranks(x, y, xlabel="X", ylabel="Y",
+                        title="Spearman (rangovi)",
+                        save_path=None):
+    """
+    Graf 3 — scatter rang(x) vs rang(y) + pravac + reziduali na rangovima.
+    Spearman ne traži linearan odnos sirovih vrijednosti: monotoni odnos
+    postaje (približno) pravac tek u prostoru rangova. Prati stvarne podatke.
+    """
+    import matplotlib.pyplot as plt
+    n = len(x)
+    rx, ry = rankdata(x), rankdata(y)
+    ra, rb = _linfit(rx, ry)
+    rs, _ = spearman(x, y)
+    r_hat = [ra + rb * xi for xi in rx]
+
+    fig, ax = plt.subplots(figsize=(6.5, 5.5))
+    for i in range(n):
+        ax.plot([rx[i], rx[i]], [ry[i], r_hat[i]], ls=":", color=_C_RES, lw=0.7, zorder=2)
+    ax.scatter(rx, ry, s=28, color=_C_PTR, edgecolor="white", lw=0.4, zorder=3)
+    rxs = [min(rx), max(rx)]
+    ax.plot(rxs, [ra + rb * rxs[0], ra + rb * rxs[1]], color="black", lw=2, zorder=4)
+    ax.set_title(f"{title}\nr_s = {rs:+.3f}")
+    ax.set_xlabel(f"rang — {xlabel}")
+    ax.set_ylabel(f"rang — {ylabel}")
+    fig.tight_layout()
+    return _save_or_show(fig, save_path)
+
+
+def plot_distribution(values, label="gustoća nalazišta (/km²)",
+                      title="Distribucija", save_path=None):
+    """
+    Dijagnostika raspodjele jedne varijable:
+      - GORE: histogram + normalna krivulja (ista μ i σ) za vizualnu usporedbu
+              koliko podaci odstupaju od normalne raspodjele.
+      - DOLJE: boxplot (pravokutnik = IQR, crta = medijan, brkovi = 1.5·IQR),
+               a točke izvan brkova su OUTLIERI.
+    Ispisuje μ, medijan i koeficijent asimetrije (skewness).
+    """
+    import matplotlib.pyplot as plt
+
+    n  = len(values)
+    mu = statistics.mean(values)
+    med = statistics.median(values)
+    sd = statistics.pstdev(values)
+    # koeficijent asimetrije (Fisher): >0 desno zakošeno, ~0 simetrično
+    skew = (sum((v - mu) ** 3 for v in values) / n) / (sd ** 3) if sd else 0.0
+
+    fig, (ax_h, ax_b) = plt.subplots(
+        2, 1, figsize=(7, 5.5), sharex=True,
+        gridspec_kw={"height_ratios": [4, 1], "hspace": 0.05})
+
+    # --- histogram + normalna krivulja ---
+    nbins = max(10, min(30, int(math.sqrt(n))))
+    ax_h.hist(values, bins=nbins, density=True, color=_C_PT,
+              edgecolor="white", alpha=0.85, zorder=2)
+    if sd > 0:
+        lo, hi = min(values), max(values)
+        step = (hi - lo) / 200 or 1
+        xs = [lo + i * step for i in range(201)]
+        norm = [math.exp(-((xi - mu) ** 2) / (2 * sd * sd)) /
+                (sd * math.sqrt(2 * math.pi)) for xi in xs]
+        ax_h.plot(xs, norm, color="black", lw=2, zorder=3,
+                  label="normalna (ista μ, σ)")
+    ax_h.axvline(mu,  color=_C_RES, lw=1.5, ls="-",  label=f"μ = {mu:.3f}")
+    ax_h.axvline(med, color="green", lw=1.5, ls="--", label=f"medijan = {med:.3f}")
+    ax_h.set_ylabel("gustoća (density)")
+    ax_h.legend(fontsize=8, loc="upper right")
+    ax_h.set_title(f"{title}\nasimetrija (skew) = {skew:+.2f}   "
+                   f"({'desno zakošeno' if skew > 0.5 else 'lijevo zakošeno' if skew < -0.5 else 'približno simetrično'})")
+
+    # --- boxplot s outlierima ---
+    ax_b.boxplot(values, vert=False, widths=0.6,
+                 flierprops=dict(marker="o", markerfacecolor=_C_RES,
+                                 markeredgecolor=_C_RES, markersize=4, alpha=0.6),
+                 medianprops=dict(color="green", lw=2),
+                 boxprops=dict(color="black"),
+                 whiskerprops=dict(color="black"),
+                 capprops=dict(color="black"))
+    ax_b.set_yticks([])
+    ax_b.set_xlabel(label)
+    ax_b.annotate("crvene točke = outlieri", xy=(0.99, 0.1),
+                  xycoords="axes fraction", ha="right", fontsize=8, color=_C_RES)
+
+    # tight_layout ne radi dobro sa sharex+gridspec; bbox='tight' u savefig to rješava
+    return _save_or_show(fig, save_path)
+
+
+def plot_correlation(x, y,
+                     xlabel="gustoća cesta (km/km²)",
+                     ylabel="gustoća nalazišta (/km²)",
+                     out_dir=None, prefix="ceste_korelacija"):
+    """
+    Generira TRI ZASEBNA grafa iz stvarnih podataka (x, y):
+       <prefix>_1_ukupna_varijabilnost.png   (nazivnik u r²)
+       <prefix>_2_regresija_reziduali.png    (brojnik u r², Pearson r)
+       <prefix>_3_spearman_rangovi.png       (Spearman na rangovima)
+
+    Ako je out_dir zadan, svaki se graf sprema u svoj PNG; inače se prikazuju.
+    Y-osi grafova 1 i 2 su izjednačene radi poštene vizualne usporedbe.
+    """
+    ymin, ymax = min(y), max(y)
+    pad = 0.06 * (ymax - ymin or 1)
+    ylim = (ymin - pad, ymax + pad)
+
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)   # stvori izlaznu mapu ako ne postoji
+
+    def _path(name):
+        if not out_dir:
+            return None
+        return os.path.join(out_dir, f"{prefix}_{name}.png")
+
+    plot_total_variation(x, y, xlabel, ylabel,
+                         save_path=_path("1_ukupna_varijabilnost"), ylim=ylim)
+    plot_regression(x, y, xlabel, ylabel,
+                    save_path=_path("2_regresija_reziduali"), ylim=ylim)
+    plot_spearman_ranks(x, y, xlabel, ylabel,
+                        save_path=_path("3_spearman_rangovi"))
 
 
 def gaussian_elim(A, b):
@@ -207,6 +430,19 @@ def partial_correlation(x, y, *controls):
     ex = ols_residuals(x, *controls)
     ey = ols_residuals(y, *controls)
     return pearson(ex, ey)
+
+
+def partial_correlation_spearman(x, y, *controls):
+    """
+    Spearmanova parcijalna korelacija r_s(x,y|controls) i p-vrijednost.
+
+    Definira se kao Pearsonova parcijalna korelacija izračunata na RANGOVIMA
+    svih varijabli (x, y i svih kontrolnih). Time je dosljedna s referentnom
+    Spearman korelacijom i prikladna za nenormalne/zakošene podatke.
+    """
+    rx, ry = rankdata(x), rankdata(y)
+    rcontrols = [rankdata(c) for c in controls]
+    return partial_correlation(rx, ry, *rcontrols)
 
 
 def interpret_r(r, p, label=""):
@@ -277,7 +513,7 @@ def run_point_analysis():
 #  B) GRID ANALIZA - Pearson + Spearman korelacija
 # ============================================================
 
-def run_grid_analysis():
+def run_grid_analysis(plot=False, out_dir=None):
     print("=" * 65)
     print("B) GRID ANALIZA: korelacija gustoće cesta i nalazišta")
     print("=" * 65)
@@ -329,6 +565,160 @@ def run_grid_analysis():
         print("  INTERPRETACIJA: Nema značajne korelacije između gustoće cesta")
         print("  i gustoće nalazišta → sampling bias nije dominantan faktor.")
     print()
+
+    if plot:
+        plot_correlation(road_vals, sett_vals, out_dir=out_dir)
+
+
+# ============================================================
+#  B2) IZVOZ GRID PODATAKA U CSV  (pokreni jednom u QGIS-u)
+# ============================================================
+
+# Stupci koji se izvoze ako postoje na gridu (ostali se preskaču bez greške):
+GRID_EXPORT_FIELDS = [
+    (GRID_ROAD_DENSITY,       "gustoca_cesta_km_ceste_po_km2_grida"),
+    (GRID_SETTLEMENT_DENSITY, "gustoca_nalazista_po_km2"),
+    (GRID_WETSOIL_FIELD,      "pct_mocvara"),
+    (GRID_TRI_FIELD,          "mean_tri"),
+    (GRID_ELEV_FIELD,         "mean_elev"),
+]
+
+# Zadana putanja CSV-a (pokraj skripte) — odatle ga čita plots_from_csv().
+# __file__ ne postoji ako se skripta zalijepi u QGIS konzolu → fallback na cwd.
+try:
+    _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+except NameError:
+    _SCRIPT_DIR = os.getcwd()
+GRID_CSV_PATH = os.path.join(_SCRIPT_DIR, "ceste_grid_podaci.csv")
+
+
+def export_grid_to_csv(path=GRID_CSV_PATH):
+    """
+    Izvuče vrijednosti svih ćelija grida (gustoća cesta, gustoća nalazišta i
+    kontrolne varijable ako su dodane) i spremi ih u CSV pokraj skripte.
+
+    Pokreni JEDNOM u QGIS Python konzoli:
+        export_grid_to_csv()
+
+    Nakon toga grafove možeš generirati i izvan QGIS-a:
+        plots_from_csv(out_dir=r"D:\\...\\grafovi")
+    """
+    import csv
+
+    grid = get_layer(GRID_LAYER)
+
+    # Mapiraj očišćen naziv (bez razmaka, mala slova) → STVARNI naziv polja.
+    # Tako matchiranje radi i kad QGIS nazive vrati s nevidljivim razmakom i sl.
+    name_map = {f.name().strip().lower(): f.name() for f in grid.fields()}
+
+    def resolve(name):
+        return name_map.get(name.strip().lower())
+
+    # zadrži samo stupce koji stvarno postoje na gridu (s razriješenim nazivima)
+    cols, missing = [], []
+    for src, alias in GRID_EXPORT_FIELDS:
+        actual = resolve(src)
+        if actual is not None:
+            cols.append((actual, alias))
+        else:
+            missing.append(src)
+    if missing:
+        print(f"  Napomena: preskačem nepostojeća polja: {missing}")
+
+    road_f = resolve(GRID_ROAD_DENSITY)
+    sett_f = resolve(GRID_SETTLEMENT_DENSITY)
+    if road_f is None or sett_f is None:
+        print("  GREŠKA: grid nema osnovna polja gustoće cesta/nalazišta.")
+        print(f"  Tražim:  GRID_ROAD_DENSITY = '{GRID_ROAD_DENSITY}'")
+        print(f"           GRID_SETTLEMENT_DENSITY = '{GRID_SETTLEMENT_DENSITY}'")
+        print(f"  Sloj '{GRID_LAYER}' stvarno ima ova polja:")
+        for f in grid.fields():
+            print(f"     - '{f.name()}'")
+        print("  → Uskladi konstante GRID_ROAD_DENSITY / GRID_SETTLEMENT_DENSITY")
+        print("    (na vrhu skripte) s gornjim nazivima i pokreni ponovno.")
+        return
+
+    headers = [alias for _, alias in cols]
+    rows, n_skip = [], 0
+    for feat in grid.getFeatures():
+        vals = [feat[src] for src, _ in cols]
+        # preskoči ćeliju ako su gustoća cesta ili nalazišta null/NaN
+        rd = feat[road_f]
+        st = feat[sett_f]
+        if rd is None or st is None or rd != rd or st != st:
+            n_skip += 1
+            continue
+        rows.append([("" if v is None or v != v else float(v)) for v in vals])
+
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(headers)
+        w.writerows(rows)
+
+    print(f"  Izvezeno {len(rows)} ćelija (preskočeno {n_skip}) → {path}")
+    print(f"  Stupci: {headers}")
+
+
+def load_grid_csv(path=GRID_CSV_PATH):
+    """Učita CSV koji je napravio export_grid_to_csv() → dict {stupac: [floatovi]}."""
+    import csv
+    with open(path, newline="", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh)
+        cols = {h: [] for h in reader.fieldnames}
+        for row in reader:
+            for h in reader.fieldnames:
+                v = row[h]
+                cols[h].append(float(v) if v not in ("", None) else float("nan"))
+    return cols
+
+
+def plots_from_csv(path=GRID_CSV_PATH, out_dir=None):
+    """
+    Generira tri zasebna grafa korelacije iz izvezenog CSV-a — radi i izvan QGIS-a.
+        plots_from_csv(out_dir=r"D:\\...\\grafovi")
+    """
+    data = load_grid_csv(path)
+    x = data["gustoca_cesta_km_ceste_po_km2_grida"]
+    y = data["gustoca_nalazista_po_km2"]
+    # ukloni eventualne NaN parove
+    pairs = [(a, b) for a, b in zip(x, y) if a == a and b == b]
+    x = [a for a, _ in pairs]
+    y = [b for _, b in pairs]
+    print(f"  Učitano {len(x)} ćelija iz {path}")
+    plot_correlation(x, y, out_dir=out_dir)
+
+    def _dpath(name):
+        return os.path.join(out_dir, name) if out_dir else None
+
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+    # distribucija odgovora (bitna za odabir Pearson/Spearman) + prediktora (info)
+    plot_distribution(y, label="gustoća nalazišta (/km²)",
+                      title="Distribucija gustoće nalazišta",
+                      save_path=_dpath("ceste_distribucija_nalazista.png"))
+    plot_distribution(x, label="gustoća cesta (km/km²)",
+                      title="Distribucija gustoće cesta",
+                      save_path=_dpath("ceste_distribucija_cesta.png"))
+
+
+def dist_from_csv(column=GRID_SETTLEMENT_DENSITY, path=GRID_CSV_PATH,
+                  label=None, title=None, save_path=None):
+    """
+    Učita JEDAN stupac iz izvezenog CSV-a i nacrta njegovu distribuciju
+    (histogram + boxplot s outlierima). Radi i izvan QGIS-a.
+        dist_from_csv(GRID_SETTLEMENT_DENSITY)              # prikaži na ekran
+        dist_from_csv(GRID_ROAD_DENSITY, save_path="d.png") # spremi u file
+    """
+    data = load_grid_csv(path)
+    if column not in data:
+        print(f"  GREŠKA: stupac '{column}' ne postoji u CSV-u.")
+        print(f"  Dostupni stupci: {list(data.keys())}")
+        return
+    vals = [v for v in data[column] if v == v]   # makni NaN
+    plot_distribution(vals,
+                      label=label or column,
+                      title=title or f"Distribucija — {column}",
+                      save_path=save_path)
 
 
 # ============================================================
@@ -436,13 +826,13 @@ def run_partial_correlation():
         print("  GREŠKA: Premalo ćelija. Provjeri je li add_wetsoil_to_grid() pokrenut.")
         return
 
-    # Obična korelacija (referenca)
+    # Obična Spearman korelacija (referenca)
     r0, p0 = spearman(road_vals, sett_vals)
-    # Parcijalna korelacija kontrolirajući za % mocvare
-    rp, pp = partial_correlation(road_vals, sett_vals, wet_vals)
+    # Spearmanova parcijalna korelacija kontrolirajući za % mocvare
+    rp, pp = partial_correlation_spearman(road_vals, sett_vals, wet_vals)
 
-    print(f"\n  Spearman r (bez kontrole):       {interpret_r(r0, p0)}")
-    print(f"  Parcijalna r (| % mocvara):      {interpret_r(rp, pp)}")
+    print(f"\n  Spearman r (bez kontrole):          {interpret_r(r0, p0)}")
+    print(f"  Spearman parcijalna (| % mocvara):  {interpret_r(rp, pp)}")
     print()
 
     delta = abs(r0) - abs(rp)
@@ -550,16 +940,17 @@ def run_partial_correlation_terrain():
         -> sampling bias je realan i neovisan o terenu
 
     Preduvjet: pokreni jednom:
+        add_wetsoil_to_grid()                                      # pct_mocvara
         add_terrain_mean_to_grid(TRI_RASTER_LAYER,  GRID_TRI_FIELD,  1)
         add_terrain_mean_to_grid(DEM_RASTER_LAYER,  GRID_ELEV_FIELD, 1)
     """
     print("=" * 65)
-    print("E) PARCIJALNA KORELACIJA: ceste <-> naselja | teren")
+    print("E) PARCIJALNA KORELACIJA: ceste <-> naselja | teren + mocvara")
     print("=" * 65)
 
     grid = get_layer(GRID_LAYER)
 
-    road_vals, sett_vals, tri_vals, elev_vals = [], [], [], []
+    road_vals, sett_vals, tri_vals, elev_vals, wet_vals = [], [], [], [], []
     n_skip = 0
 
     for feat in grid.getFeatures():
@@ -567,19 +958,27 @@ def run_partial_correlation_terrain():
         s  = feat[GRID_SETTLEMENT_DENSITY]
         t  = feat[GRID_TRI_FIELD]
         e  = feat[GRID_ELEV_FIELD]
-        if any(v is None or v != v for v in [r, s, t, e]):
+        w  = feat[GRID_WETSOIL_FIELD]
+        if any(v is None or v != v for v in [r, s, t, e, w]):
             n_skip += 1
             continue
         road_vals.append(float(r))
         sett_vals.append(float(s))
         tri_vals.append(float(t))
         elev_vals.append(float(e))
+        wet_vals.append(float(w))
 
+    _report_partial_terrain(road_vals, sett_vals, tri_vals, elev_vals, wet_vals, n_skip)
+
+
+def _report_partial_terrain(road_vals, sett_vals, tri_vals, elev_vals, wet_vals,
+                            n_skip=0):
+    """Zajednicka analiza+ispis za parcijalnu korelaciju (koriste QGIS i CSV verzija)."""
     n = len(road_vals)
     print(f"\n  Celije s kompletnim podacima: {n}  (preskoceno: {n_skip})")
 
     if n < 15:
-        print("  GRESKA: Premalo celija. Provjeri jesu li atributi dodani na grid.")
+        print("  GRESKA: Premalo celija. Provjeri jesu li atributi dodani na grid/CSV.")
         return
 
     # Referentna korelacija (bez kontrole)
@@ -589,27 +988,29 @@ def run_partial_correlation_terrain():
     print()
 
     scenarios = [
-        ("| mean_tri",          [tri_vals]),
-        ("| mean_elev",         [elev_vals]),
-        ("| mean_tri + elev",   [tri_vals, elev_vals]),
+        ("| mocvara",                 [wet_vals]),
+        ("| mean_tri",                [tri_vals]),
+        ("| mean_elev",               [elev_vals]),
+        ("| mean_tri + elev",         [tri_vals, elev_vals]),
+        ("| mocvara + tri + elev",    [wet_vals, tri_vals, elev_vals]),
     ]
 
     for label, controls in scenarios:
-        rp, pp = partial_correlation(road_vals, sett_vals, *controls)
+        rp, pp = partial_correlation_spearman(road_vals, sett_vals, *controls)
         delta  = abs(r0) - abs(rp)
-        print(f"  Parcijalna r {label:<25s}: {interpret_r(rp, pp)}")
+        print(f"  Spearman parcijalna {label:<24s}: {interpret_r(rp, pp)}")
         print(f"    Pad |r|: {abs(r0):.3f} -> {abs(rp):.3f}  (delta = {delta:.3f})")
 
         if delta > 0.10 and pp >= 0.05:
-            print("    INTERPRETACIJA: Teren objasnjava ceste<->nalazista vezu.")
+            print("    INTERPRETACIJA: Krajobraz objasnjava ceste<->nalazista vezu.")
             print("      Road bias je posredovan tipom krajolika, a ne istrazivackom")
-            print("      pristranoscu. Korelacija je artefakt geomorfologije.")
+            print("      pristranoscu. Korelacija je artefakt krajobraza.")
         elif delta > 0.10 and pp < 0.05:
-            print("    INTERPRETACIJA: Teren DJELOMICNO objasnjava vezu, no korelacija")
-            print("      ostaje znacajna -> i teren I sampling bias doprinose signalu.")
+            print("    INTERPRETACIJA: Krajobraz DJELOMICNO objasnjava vezu, no korelacija")
+            print("      ostaje znacajna -> i krajobraz I sampling bias doprinose signalu.")
         elif delta <= 0.05 and pp < 0.05:
-            print("    INTERPRETACIJA: Teren ne objasnjava vezu ceste<->nalazista.")
-            print("      Sampling bias je realan i NEZAVISAN od terena.")
+            print("    INTERPRETACIJA: Krajobraz ne objasnjava vezu ceste<->nalazista.")
+            print("      Sampling bias je realan i NEZAVISAN od krajobraza.")
         else:
             print("    INTERPRETACIJA: Blagi pad, ali veza ostaje znacajna.")
         print()
@@ -617,6 +1018,40 @@ def run_partial_correlation_terrain():
     print("  SAVJET: Ako svi scenariji pokazuju mali pad (delta<0.05),")
     print("  to ucvrsuje zakljucak da je road bias istrazivacki, a ne krajobrazni.")
     print()
+
+
+def partial_terrain_from_csv(path=GRID_CSV_PATH):
+    """
+    Parcijalna Spearman korelacija iz izvezenog CSV-a — radi IZVAN QGIS-a.
+    CSV mora imati stupce: gustoca_cesta..., gustoca_nalazista..., pct_mocvara,
+    mean_tri, mean_elev (tj. izvezen nakon add_wetsoil_to_grid + add_terrain...).
+        partial_terrain_from_csv()
+    """
+    print("=" * 65)
+    print("E) PARCIJALNA KORELACIJA (iz CSV-a): ceste <-> naselja | teren + mocvara")
+    print("=" * 65)
+
+    data = load_grid_csv(path)
+    need = [GRID_ROAD_DENSITY, GRID_SETTLEMENT_DENSITY,
+            GRID_WETSOIL_FIELD, GRID_TRI_FIELD, GRID_ELEV_FIELD]
+    missing = [c for c in need if c not in data]
+    if missing:
+        print(f"  GRESKA: CSV nema potrebne stupce: {missing}")
+        print(f"  Dostupni: {list(data.keys())}")
+        print("  Ponovno izvezi CSV u QGIS-u nakon add_wetsoil_to_grid() i add_terrain_mean_to_grid().")
+        return
+
+    cols = [data[c] for c in need]
+    road, sett, wet, tri, elev = [], [], [], [], []
+    n_skip = 0
+    for vals in zip(*cols):
+        if any(v != v for v in vals):   # NaN check
+            n_skip += 1
+            continue
+        r, s, w, t, e = vals
+        road.append(r); sett.append(s); wet.append(w); tri.append(t); elev.append(e)
+
+    _report_partial_terrain(road, sett, tri, elev, wet, n_skip)
 
 
 # ============================================================
@@ -736,7 +1171,20 @@ def generate_road_biased_random():
 #  POKRENI
 # ============================================================
 # run_point_analysis()
-# run_grid_analysis()
+
+if QgsProject is not None:
+    # Unutar QGIS-a: čitaj grid uživo, izvezi CSV (za kasnije) i nacrtaj grafove
+    export_grid_to_csv()
+    run_grid_analysis(plot=True, out_dir=r"C:\\Users\\Martin\\Desktop\\slike_za_diplomski")
+else:
+    # Izvan QGIS-a: nacrtaj iz prethodno izvezenog CSV-a (mora postojati)
+    #plots_from_csv(out_dir=r"C:\\Users\\Martin\\Desktop\\slike_za_diplomski")
+    _SLIKE_DIR = r"C:\Users\Martin\Desktop\slike_za_diplomski"
+    os.makedirs(_SLIKE_DIR, exist_ok=True)
+    #dist_from_csv(GRID_SETTLEMENT_DENSITY, label="gustoća nalazišta (/km²)",
+    #              title="Distribucija gustoće nalazišta",
+    #              save_path=os.path.join(_SLIKE_DIR, "ceste_distribucija_nalazista.png"))
+    partial_terrain_from_csv()
 
 # --- Novi workflow: parcijalna korelacija s terenom ---
 # Korak 1: dodaj terenske atribute na grid (jedanput)
@@ -808,7 +1256,7 @@ C) PARCIJALNA KORELACIJA: ceste ↔ naselja | % mocvarnog tla
 # add_terrain_mean_to_grid("TRI",  "mean_tri",  1)   # TRI raster
 # add_terrain_mean_to_grid("nadmorska_visina",  "mean_elev",  1)   # DEM raster
 
-run_partial_correlation_terrain()
+#run_partial_correlation_terrain()
 
 """
 =================================================================
@@ -836,4 +1284,46 @@ E) PARCIJALNA KORELACIJA: ceste <-> naselja | teren
 
   SAVJET: Ako svi scenariji pokazuju mali pad (delta<0.05),
   to ucvrsuje zakljucak da je road bias istrazivacki, a ne krajobrazni.
+
+
+  ........................................................
+
+  =================================================================
+E) PARCIJALNA KORELACIJA (iz CSV-a): ceste <-> naselja | teren + mocvara
+=================================================================
+
+  Celije s kompletnim podacima: 164  (preskoceno: 0)
+
+  Referentna Spearman (bez kontrole):   r = +0.454  p = 9.08e-11  → umjerena pozitivna korelacija, značajna
+
+  Spearman parcijalna | mocvara               :   r = +0.472  p = 9.85e-12  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.472  (delta = -0.018)
+    INTERPRETACIJA: Krajobraz ne objasnjava vezu ceste<->nalazista.
+      Sampling bias je realan i NEZAVISAN od krajobraza.
+
+  Spearman parcijalna | mean_tri              :   r = +0.443  p = 3.19e-10  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.443  (delta = 0.011)
+    INTERPRETACIJA: Krajobraz ne objasnjava vezu ceste<->nalazista.
+      Sampling bias je realan i NEZAVISAN od krajobraza.
+
+  Spearman parcijalna | mean_elev             :   r = +0.459  p = 4.67e-11  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.459  (delta = -0.006)
+    INTERPRETACIJA: Krajobraz ne objasnjava vezu ceste<->nalazista.
+      Sampling bias je realan i NEZAVISAN od krajobraza.
+
+  Spearman parcijalna | mean_tri + elev       :   r = +0.434  p = 8.96e-10  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.434  (delta = 0.020)
+    INTERPRETACIJA: Krajobraz ne objasnjava vezu ceste<->nalazista.
+      Sampling bias je realan i NEZAVISAN od krajobraza.
+
+  Spearman parcijalna | mocvara + tri + elev  :   r = +0.446  p = 2.38e-10  → umjerena pozitivna korelacija, značajna
+    Pad |r|: 0.454 -> 0.446  (delta = 0.008)
+    INTERPRETACIJA: Krajobraz ne objasnjava vezu ceste<->nalazista.
+      Sampling bias je realan i NEZAVISAN od krajobraza.
+
+  SAVJET: Ako svi scenariji pokazuju mali pad (delta<0.05),
+  to ucvrsuje zakljucak da je road bias istrazivacki, a ne krajobrazni.
 """
+
+
+#export_grid_to_csv()

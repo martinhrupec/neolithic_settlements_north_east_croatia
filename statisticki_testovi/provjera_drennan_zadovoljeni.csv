@@ -1,0 +1,42 @@
+﻿Usporedba;Varijabla;Prilagodba;Kategorije (ćelije);Broj ćelija;Najmanja očekivana frekvencija;Ćelije s očekivanom f. < 1;Ćelije s očekivanom f. < 5;Postotak ćelija s očekivanom f. < 5;Uvjet (a): nijedna očekivana f. < 1;Uvjet (b): najviše 20 % ćelija s očekivanom f. < 5;Oba uvjeta zadovoljena;p-vrijednost;Statistički značajno (p < 0,05)
+Usporedba I: pozadina / neolitik;Ekspozicija (4 smjera);bez prilagodbe;NE | SE | SW | NW;4;13,84;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba I: pozadina / neolitik;Ekspozicija (istok / zapad);bez prilagodbe;E | W;2;29,26;0;0;0,0;DA;DA;DA;0,106;NE
+Usporedba I: pozadina / neolitik;Ekspozicija (sjever / jug);bez prilagodbe;N | S;2;28,72;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba I: pozadina / neolitik;Tip tla (radijus 100 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Gleysols | Cambisols | Luvisols | Fluvisols | rijetka tla;5;3,74;0;1;20,0;DA;DA;DA;< 0,001;DA
+Usporedba I: pozadina / neolitik;Tip tla (radijus 250 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Gleysols | Cambisols | Luvisols | Fluvisols | rijetka tla;5;3,74;0;1;20,0;DA;DA;DA;0,001;DA
+Usporedba I: pozadina / neolitik;Tip tla (radijus 500 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Gleysols | Cambisols | Luvisols | Fluvisols | rijetka tla;5;3,74;0;1;20,0;DA;DA;DA;0,002;DA
+Usporedba I: pozadina / neolitik;Tip tla (radijus 1000 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Gleysols | Cambisols | Luvisols | Fluvisols | rijetka tla;5;3,74;0;1;20,0;DA;DA;DA;0,001;DA
+Usporedba I: pozadina / neolitik;Vlažnost tla (radijus 100 m);bez prilagodbe;Mocvarno | Suho;2;116,60;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba I: pozadina / neolitik;Vlažnost tla (radijus 250 m);bez prilagodbe;Mocvarno | Suho;2;116,60;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba I: pozadina / neolitik;Vlažnost tla (radijus 500 m);bez prilagodbe;Mocvarno | Suho;2;116,60;0;0;0,0;DA;DA;DA;0,004;DA
+Usporedba I: pozadina / neolitik;Vlažnost tla (radijus 1000 m);bez prilagodbe;Mocvarno | Suho;2;116,60;0;0;0,0;DA;DA;DA;0,003;DA
+Usporedba I: pozadina / neolitik;Strahlerov red toka;Strahler: redovi ≥ 4 spojeni u jednu klasu;1 | 2 | 3 | 4;4;40,36;0;0;0,0;DA;DA;DA;0,003;DA
+Usporedba II: nasumične ceste / neolitik;Ekspozicija (4 smjera);bez prilagodbe;NE | NW | SE | SW;8;9,34;0;0;0,0;DA;DA;DA;0,246;NE
+Usporedba II: nasumične ceste / neolitik;Ekspozicija (istok / zapad);bez prilagodbe;E | W;4;23,59;0;0;0,0;DA;DA;DA;0,734;NE
+Usporedba II: nasumične ceste / neolitik;Ekspozicija (sjever / jug);bez prilagodbe;N | S;4;21,14;0;0;0,0;DA;DA;DA;0,095;NE
+Usporedba II: nasumične ceste / neolitik;Tip tla (radijus 100 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Cambisols | Fluvisols | Gleysols | Luvisols | rijetka tla;10;5,50;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Tip tla (radijus 250 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Cambisols | Fluvisols | Gleysols | Luvisols | rijetka tla;10;2,50;0;2;20,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Tip tla (radijus 500 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Cambisols | Fluvisols | Gleysols | Luvisols | rijetka tla;10;2,00;0;2;20,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Tip tla (radijus 1000 m);tlo: 4 dominantna tipa + skupina „rijetka tla”;Cambisols | Fluvisols | Gleysols | Luvisols | rijetka tla;10;1,50;0;2;20,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Vlažnost tla (radijus 100 m);bez prilagodbe;Mocvarno | Suho;4;113,50;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Vlažnost tla (radijus 250 m);bez prilagodbe;Mocvarno | Suho;4;118,00;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Vlažnost tla (radijus 500 m);bez prilagodbe;Mocvarno | Suho;4;119,50;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Vlažnost tla (radijus 1000 m);bez prilagodbe;Mocvarno | Suho;4;122,50;0;0;0,0;DA;DA;DA;< 0,001;DA
+Usporedba II: nasumične ceste / neolitik;Strahlerov red toka;Strahler: redovi ≥ 4 spojeni u jednu klasu;1 | 2 | 3 | 4;8;31,00;0;0;0,0;DA;DA;DA;0,008;DA
+Usporedba III: ranoneolitička / kasnoneolitička;Ekspozicija (istok / zapad);bez prilagodbe;E | W;4;9,55;0;0;0,0;DA;DA;DA;1,000;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Ekspozicija (sjever / jug);bez prilagodbe;N | S;4;6,36;0;0;0,0;DA;DA;DA;0,929;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Vlažnost tla (radijus 100 m);bez prilagodbe;Mocvarno | Suho;4;27,92;0;0;0,0;DA;DA;DA;0,864;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Vlažnost tla (radijus 250 m);bez prilagodbe;Mocvarno | Suho;4;28,67;0;0;0,0;DA;DA;DA;0,809;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Vlažnost tla (radijus 500 m);bez prilagodbe;Mocvarno | Suho;4;29,80;0;0;0,0;DA;DA;DA;0,504;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Vlažnost tla (radijus 1000 m);bez prilagodbe;Mocvarno | Suho;4;29,05;0;0;0,0;DA;DA;DA;0,651;NE
+Usporedba III: ranoneolitička / kasnoneolitička;Strahlerov red toka;Strahler: redovi ≥ 4 spojeni u jednu klasu;1 | 2 | 3 | 4;8;10,94;0;0;0,0;DA;DA;DA;0,109;NE
+Usporedba IV: jednofazna / kontinuirana;Ekspozicija (istok / zapad);bez prilagodbe;E | W;4;6,13;0;0;0,0;DA;DA;DA;0,029;DA
+Usporedba IV: jednofazna / kontinuirana;Tip tla (radijus 100 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;1,38;0;1;12,5;DA;DA;DA;0,218;NE
+Usporedba IV: jednofazna / kontinuirana;Tip tla (radijus 250 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;1,58;0;1;12,5;DA;DA;DA;0,229;NE
+Usporedba IV: jednofazna / kontinuirana;Tip tla (radijus 500 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;1,58;0;1;12,5;DA;DA;DA;0,092;NE
+Usporedba IV: jednofazna / kontinuirana;Tip tla (radijus 1000 m);bez prilagodbe;Cambisols | Fluvisols | Gleysols | Luvisols;8;1,38;0;1;12,5;DA;DA;DA;0,046;DA
+Usporedba IV: jednofazna / kontinuirana;Vlažnost tla (radijus 100 m);bez prilagodbe;Mocvarno | Suho;4;16,95;0;0;0,0;DA;DA;DA;0,145;NE
+Usporedba IV: jednofazna / kontinuirana;Vlažnost tla (radijus 250 m);bez prilagodbe;Mocvarno | Suho;4;17,54;0;0;0,0;DA;DA;DA;0,190;NE
+Usporedba IV: jednofazna / kontinuirana;Vlažnost tla (radijus 500 m);bez prilagodbe;Mocvarno | Suho;4;18,33;0;0;0,0;DA;DA;DA;0,219;NE
+Usporedba IV: jednofazna / kontinuirana;Vlažnost tla (radijus 1000 m);bez prilagodbe;Mocvarno | Suho;4;18,13;0;0;0,0;DA;DA;DA;0,397;NE
+Usporedba IV: jednofazna / kontinuirana;Strahlerov red toka;Strahler: redovi ≥ 4 spojeni u jednu klasu;1 | 2 | 3 | 4;8;7,49;0;0;0,0;DA;DA;DA;0,680;NE

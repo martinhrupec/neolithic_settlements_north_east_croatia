@@ -1,0 +1,37 @@
+scenarij,varijabla,transformacija,p_sirovo,k_sir,min_exp_sir,pct_lt5_sir,a_ok_sir,b_ok_sir,p_finalno,k_fin,min_exp_fin,pct_lt5_fin,a_ok_fin,b_ok_fin
+02_random_ceste,aspect_cat4,-,0.24578,4,9.339,0.0,True,True,0.24578,4,9.339,0.0,True,True
+02_random_ceste,aspect_ew,-,0.733923,2,23.593,0.0,True,True,0.733923,2,23.593,0.0,True,True
+02_random_ceste,aspect_sn,-,0.094937,2,21.136,0.0,True,True,0.094937,2,21.136,0.0,True,True
+02_random_ceste,vtt_r100,vtt: 4 glavna + rijetka_tla,0.0,7,0.5,42.9,False,False,0.0,5,5.5,0.0,True,True
+02_random_ceste,vtt_r250,vtt: 4 glavna + rijetka_tla,0.0,6,0.5,33.3,False,False,0.0,5,2.5,20.0,True,True
+02_random_ceste,vtt_r500,vtt: 4 glavna + rijetka_tla,0.0,6,0.5,33.3,False,False,0.0,5,2.0,20.0,True,True
+02_random_ceste,vtt_r1000,vtt: 4 glavna + rijetka_tla,0.0,6,0.5,33.3,False,False,0.0,5,1.5,20.0,True,True
+02_random_ceste,sm_r100,-,3e-06,2,113.5,0.0,True,True,3e-06,2,113.5,0.0,True,True
+02_random_ceste,sm_r250,-,1e-06,2,118.0,0.0,True,True,1e-06,2,118.0,0.0,True,True
+02_random_ceste,sm_r500,-,7e-06,2,119.5,0.0,True,True,7e-06,2,119.5,0.0,True,True
+02_random_ceste,sm_r1000,-,0.0,2,122.5,0.0,True,True,0.0,2,122.5,0.0,True,True
+02_random_ceste,strahler,-,1.9e-05,6,8.0,0.0,True,True,1.9e-05,6,8.0,0.0,True,True
+04_rano_vs_kasno,aspect_cat4,-,0.499219,4,2.727,50.0,True,False,0.499219,4,2.727,50.0,True,False
+04_rano_vs_kasno,aspect_ew,-,1.0,2,9.545,0.0,True,True,1.0,2,9.545,0.0,True,True
+04_rano_vs_kasno,aspect_sn,-,0.929368,2,6.364,0.0,True,True,0.929368,2,6.364,0.0,True,True
+04_rano_vs_kasno,vtt_r100,-,0.924876,4,2.264,25.0,True,False,0.924876,4,2.264,25.0,True,False
+04_rano_vs_kasno,vtt_r250,-,0.757348,4,2.641,25.0,True,False,0.757348,4,2.641,25.0,True,False
+04_rano_vs_kasno,vtt_r500,-,0.706859,4,2.264,25.0,True,False,0.706859,4,2.264,25.0,True,False
+04_rano_vs_kasno,vtt_r1000,-,0.591604,4,1.886,25.0,True,False,0.591604,4,1.886,25.0,True,False
+04_rano_vs_kasno,sm_r100,-,0.863996,2,27.918,0.0,True,True,0.863996,2,27.918,0.0,True,True
+04_rano_vs_kasno,sm_r250,-,0.808789,2,28.673,0.0,True,True,0.808789,2,28.673,0.0,True,True
+04_rano_vs_kasno,sm_r500,-,0.504015,2,29.805,0.0,True,True,0.504015,2,29.805,0.0,True,True
+04_rano_vs_kasno,sm_r1000,-,0.651258,2,29.05,0.0,True,True,0.651258,2,29.05,0.0,True,True
+04_rano_vs_kasno,strahler,strahler: redovi >= 4 spojeni,0.048328,6,2.641,33.3,True,False,0.109417,4,10.941,0.0,True,True
+06_jedno_vs_kont,aspect_cat4,-,0.080049,4,2.133,37.5,True,False,0.080049,4,2.133,37.5,True,False
+06_jedno_vs_kont,aspect_ew,-,0.029137,2,6.133,0.0,True,True,0.029137,2,6.133,0.0,True,True
+06_jedno_vs_kont,aspect_sn,-,0.503204,2,4.533,25.0,True,False,0.503204,2,4.533,25.0,True,False
+06_jedno_vs_kont,vtt_r100,-,0.218471,4,1.38,12.5,True,True,0.218471,4,1.38,12.5,True,True
+06_jedno_vs_kont,vtt_r250,-,0.228775,4,1.577,12.5,True,True,0.228775,4,1.577,12.5,True,True
+06_jedno_vs_kont,vtt_r500,-,0.091844,4,1.577,12.5,True,True,0.091844,4,1.577,12.5,True,True
+06_jedno_vs_kont,vtt_r1000,-,0.04608,4,1.38,12.5,True,True,0.04608,4,1.38,12.5,True,True
+06_jedno_vs_kont,sm_r100,-,0.14541,2,16.949,0.0,True,True,0.14541,2,16.949,0.0,True,True
+06_jedno_vs_kont,sm_r250,-,0.190132,2,17.54,0.0,True,True,0.190132,2,17.54,0.0,True,True
+06_jedno_vs_kont,sm_r500,-,0.219486,2,18.328,0.0,True,True,0.219486,2,18.328,0.0,True,True
+06_jedno_vs_kont,sm_r1000,-,0.397442,2,18.131,0.0,True,True,0.397442,2,18.131,0.0,True,True
+06_jedno_vs_kont,strahler,-,0.799557,6,1.577,25.0,True,False,0.799557,6,1.577,25.0,True,False

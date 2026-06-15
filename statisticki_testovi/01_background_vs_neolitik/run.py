@@ -24,6 +24,13 @@ MASTER  = os.path.join(ROOT, "master_dataset.csv")
 BG_DIR  = os.path.join(ROOT, "background")
 OUT_DIR = os.path.join(ROOT, "01_background_vs_neolitik")
 OUT_CSV = os.path.join(OUT_DIR, "rezultati.csv")
+OUT_CSV_FIXED = os.path.join(OUT_DIR, "rezultati_fixed_cohens_w.csv")
+
+# Strahlerovi redovi >= STRAHLER_CAP (veliki vodotoci, rijetki) spajaju se u
+# jednu klasu SAMO za chi-square, kako bi zadovoljio Drennanove (1996: 197-198)
+# uvjete. Cliffova delta racuna se na punim ordinalnim vrijednostima.
+# Isto pravilo (1,2,3,4+) primijenjeno je u svim scenarijima.
+STRAHLER_CAP = 4
 
 
 # ---------------------------------------------------------------------------
@@ -154,6 +161,26 @@ def aspect_bg_proportions(binner, categories):
     return {c: float(grouped.get(c, 0)) / total for c in categories}
 
 
+# Tla koja pokrivaju >=1% krajolika ostaju zasebno; sva ostala (trace tla,
+# svako <1% povrsine) a priori se spajaju u jednu klasu 'rijetka_tla' kako bi
+# chi-square GoF zadovoljio Drennanove (1996: 197-198) uvjete o ocekivanim
+# frekvencijama. Pravilo je definirano na pokrivenosti krajolika, ne na uzorku.
+# Vidi provjera_drennan.py za empirijsku potvrdu.
+VTT_PRAG_GLAVNA = 0.01
+
+
+def grupiraj_rijetke(vals, props, prag=VTT_PRAG_GLAVNA, rare_label="rijetka_tla"):
+    """Spoji sve kategorije s background udjelom < prag u jednu 'rijetku' klasu.
+    Vraca (remapirane vrijednosti, remapirane bg proporcije)."""
+    glavna  = {c for c, p in props.items() if p >= prag}
+    remap   = lambda c: c if c in glavna else rare_label
+    vals_r  = pd.Series(vals).map(remap)
+    props_r = {}
+    for c, p in props.items():
+        props_r[remap(c)] = props_r.get(remap(c), 0.0) + p
+    return vals_r, props_r
+
+
 # ---------------------------------------------------------------------------
 #  Test wrapper funkcije
 # ---------------------------------------------------------------------------
@@ -220,26 +247,31 @@ def test_categorical(name, neolitik_vals, bg_props, source_label):
         "effect_value":     V,
         "effect_interp":    interp_cramers(V),
         "smjer":            "",
+        "k_kat":            len(cats),
+        "n_cramers":        int(n),
     }
 
 
 def test_strahler(neolitik_vals, bg_strahler):
-    obs_counts = pd.Series(neolitik_vals).dropna().astype(int).value_counts()
-    cats       = sorted(bg_strahler["strahler"].astype(int).unique())
+    neo_s      = pd.Series(neolitik_vals).dropna().astype(int)
+    total_km   = bg_strahler["duljina_km"].sum()
+    # za chi-square: redovi >= STRAHLER_CAP spojeni u jednu klasu (Drennan 1996: 197-198)
+    neo_cap    = neo_s.clip(upper=STRAHLER_CAP)
+    bg_red     = bg_strahler["strahler"].astype(int).clip(upper=STRAHLER_CAP)
+    obs_counts = neo_cap.value_counts()
+    cats       = sorted(bg_red.unique())
     observed   = np.array([obs_counts.get(c, 0) for c in cats], dtype=float)
     n          = observed.sum()
-    total_km   = bg_strahler["duljina_km"].sum()
     expected   = np.array([
-        bg_strahler[bg_strahler["strahler"] == c]["duljina_km"].sum() / total_km * n
+        bg_strahler.loc[bg_red == c, "duljina_km"].sum() / total_km * n
         for c in cats
     ], dtype=float)
-    # Sklonimo eventualne nule u expected (nije problem ovdje, ali safety)
     mask = expected > 0
     chi2, p = stats.chisquare(f_obs=observed[mask], f_exp=expected[mask])
-    # Cliff's delta: rekonstruiramo bg sample proporcionalno duljini (10 000 tocaka)
+    # Cliffova delta na PUNIM ordinalnim vrijednostima (rang-bazirana, ne treba prilagodbu)
     weights = (bg_strahler["duljina_km"].values / total_km * 10000).round().astype(int)
     bg_sample = np.repeat(bg_strahler["strahler"].astype(int).values, weights)
-    d = cliffs_delta(np.asarray(pd.Series(neolitik_vals).dropna().astype(int)), bg_sample)
+    d = cliffs_delta(np.asarray(neo_s), bg_sample)
     return {
         "varijabla":        "strahler",
         "tip":              "ordinalna",
@@ -253,6 +285,38 @@ def test_strahler(neolitik_vals, bg_strahler):
         "effect_interp":    interp_cliffs(d),
         "smjer":            smjer_cliff(d),
     }
+
+
+# ---------------------------------------------------------------------------
+#  Cohen's w za kategorijske tablice vece od 2x2
+# ---------------------------------------------------------------------------
+
+def write_cohens_w_fixed(out):
+    """Za kategorijske tablice vece od 2x2 zapisi Cohenov w pored Cramerova V.
+
+    Cramerov V dijeli hi-kvadrat s (k-1) stupnjeva slobode, pa za tablice s
+    vise kategorija (npr. vtt = 12 kategorija) Cohenovi pragovi 0.10/0.30/0.50
+    (kalibrirani za df=1, tj. tablicu 2x2) podcjenjuju velicinu ucinka.
+    Cohenov w = sqrt(chi2 / n) ne dijeli s df i tumaci se istim pragovima
+    (Cohen 1988). Ova datoteka sluzi za usporedbu — pokazuje gdje se
+    interpretacija mijenja prelaskom s Cramerova V na Cohenov w.
+    """
+    cat = out[(out["effect_name"] == "CramersV") & (out["k_kat"] > 2)].copy()
+    if cat.empty:
+        print("\nCohen's w: nema kategorijskih tablica > 2x2.")
+        return
+    cat["cohens_w"]        = np.sqrt(cat["statistika"] / cat["n_cramers"])
+    cat["cohens_w_interp"] = cat["cohens_w"].apply(interp_cramers)  # isti Cohen 1988 pragovi
+    cat = cat.rename(columns={"effect_value":  "cramers_v",
+                              "effect_interp": "cramers_v_interp"})
+    cat["promjena_interp"] = cat["cramers_v_interp"] != cat["cohens_w_interp"]
+    fixed_cols = ["varijabla", "test", "k_kat", "n_cramers", "statistika",
+                  "p_value", "znacajnost_005", "znacajnost_005_bonf",
+                  "cramers_v", "cramers_v_interp",
+                  "cohens_w", "cohens_w_interp", "promjena_interp"]
+    cat[fixed_cols].to_csv(OUT_CSV_FIXED, index=False, encoding="utf-8")
+    print(f"\nCohen's w (tablice >2x2): {len(cat)} testova -> {OUT_CSV_FIXED}")
+    print(f"  promjena interpretacije: {int(cat['promjena_interp'].sum())} / {len(cat)}")
 
 
 # ---------------------------------------------------------------------------
@@ -304,7 +368,9 @@ def main():
         col  = f"vtt_r{r}"
         vals = neo[col].dropna()
         vals = vals[vals.isin(vtt_props.keys())]   # samo poznate kategorije
-        results.append(test_categorical(col, vals, vtt_props, "background_vtt.csv"))
+        vals_g, props_g = grupiraj_rijetke(vals, vtt_props)  # 4 glavna + rijetka_tla
+        results.append(test_categorical(col, vals_g, props_g,
+                                        "background_vtt.csv (4 glavna + rijetka_tla)"))
 
     # 15a-d) sm_rN
     bg_sm    = pd.read_csv(os.path.join(BG_DIR, "background_sm.csv"), encoding="utf-8-sig")
@@ -343,6 +409,8 @@ def main():
     out["p_bonferroni"]        = (out["p_value"] * n_tests).clip(upper=1.0)
     out["znacajnost_005"]      = out["p_value"]      < 0.05
     out["znacajnost_005_bonf"] = out["p_bonferroni"] < 0.05
+
+    write_cohens_w_fixed(out)
 
     col_order = [
         "varijabla", "tip", "test", "n_neolitik", "background_source",

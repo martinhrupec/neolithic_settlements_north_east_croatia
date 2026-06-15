@@ -24,8 +24,14 @@ from scipy import stats
 
 ROOT    = r"c:\Users\Martin\Desktop\skripte_za_diplomski\statisticki_testovi"
 MASTER  = os.path.join(ROOT, "master_dataset.csv")
+BG_DIR  = os.path.join(ROOT, "background")
 OUT_DIR = os.path.join(ROOT, "02_random_ceste_bias_vs_neolitik")
 OUT_CSV = os.path.join(OUT_DIR, "rezultati.csv")
+OUT_CSV_FIXED = os.path.join(OUT_DIR, "rezultati_fixed_cohens_w.csv")
+
+# Strahlerovi redovi >= STRAHLER_CAP spojeni u jednu klasu SAMO za chi-square
+# (Drennan 1996: 197-198). Cliffova delta na punim ordinalnim vrijednostima.
+STRAHLER_CAP = 4
 
 
 # ---------------------------------------------------------------------------
@@ -47,6 +53,24 @@ def cliffs_delta(x, y):
 
 def cramers_v_contingency(chi2, n, dof_min):
     return float(np.sqrt(chi2 / (n * max(dof_min, 1))))
+
+
+# Tla koja pokrivaju >=1% krajolika ostaju zasebno; sva trace tla (svako <1%
+# povrsine) a priori se spajaju u 'rijetka_tla' radi valjanosti chi-square
+# (Drennan 1996: 197-198). Isto grupiranje kao u scenariju 1.
+def vtt_glavna_kategorije(prag=0.01):
+    bg    = pd.read_csv(os.path.join(BG_DIR, "background_vtt.csv"), encoding="utf-8-sig")
+    share = bg.set_index("tip_tla")["n_piksela"] / bg["n_piksela"].sum()
+    return set(share[share >= prag].index)
+
+
+def grupiraj_vtt(vals, glavna, rare_label="rijetka_tla"):
+    """Spoji sva tla izvan 'glavna' skupa u jednu 'rijetka_tla' klasu (NaN ostaje NaN)."""
+    def remap(c):
+        if pd.isna(c):
+            return c
+        return c if c in glavna else rare_label
+    return pd.Series(vals).map(remap)
 
 
 # ---------------------------------------------------------------------------
@@ -140,21 +164,26 @@ def test_categorical_2samp(name, neo_vals, ctrl_vals):
         "effect_value":  V,
         "effect_interp": interp_cramers(V),
         "smjer":         "",
+        "k_kat":         int(table.shape[1]),
+        "n_cramers":     int(n),
     }
 
 
 def test_strahler(neo_vals, ctrl_vals):
     neo = pd.Series(neo_vals).dropna().astype(int)
     ctr = pd.Series(ctrl_vals).dropna().astype(int)
-    cats = sorted(set(neo.unique()) | set(ctr.unique()))
+    # za chi-square: redovi >= STRAHLER_CAP spojeni u jednu klasu (Drennan 1996: 197-198)
+    neo_c = neo.clip(upper=STRAHLER_CAP)
+    ctr_c = ctr.clip(upper=STRAHLER_CAP)
+    cats = sorted(set(neo_c.unique()) | set(ctr_c.unique()))
     table = np.array([
-        [int((neo == c).sum()) for c in cats],
-        [int((ctr == c).sum()) for c in cats],
+        [int((neo_c == c).sum()) for c in cats],
+        [int((ctr_c == c).sum()) for c in cats],
     ])
     keep = table.sum(axis=0) > 0
     table = table[:, keep]
     chi2, p, _, _ = stats.chi2_contingency(table)
-    d = cliffs_delta(neo.values, ctr.values)
+    d = cliffs_delta(neo.values, ctr.values)   # puni ordinalni rasponi
     return {
         "varijabla":   "strahler",
         "tip":         "ordinalna",
@@ -168,6 +197,37 @@ def test_strahler(neo_vals, ctrl_vals):
         "effect_interp": interp_cliffs(d),
         "smjer":         smjer_cliff(d),
     }
+
+
+# ---------------------------------------------------------------------------
+#  Cohen's w za kategorijske tablice vece od 2x2
+# ---------------------------------------------------------------------------
+
+def write_cohens_w_fixed(out):
+    """Za kategorijske tablice vece od 2x2 zapisi Cohenov w pored Cramerova V.
+
+    Napomena: u 2-uzorkovnim usporedbama tablica je 2 x k, pa je za Cramerov V
+    df_min = min(2,k) - 1 = 1 uvijek. Tada je Cramerov V = sqrt(chi2/n) = Cohenov w,
+    pa se vrijednosti NE razlikuju (promjena_interp = False). Datoteka to potvrduje;
+    stvarna razlika postoji samo u 1-uzorkovnim (GoF) tablicama scenarija 1.
+    Cohenov w tumaci se istim pragovima (Cohen 1988: 0.10 / 0.30 / 0.50).
+    """
+    cat = out[(out["effect_name"] == "CramersV") & (out["k_kat"] > 2)].copy()
+    if cat.empty:
+        print("\nCohen's w: nema kategorijskih tablica > 2x2.")
+        return
+    cat["cohens_w"]        = np.sqrt(cat["statistika"] / cat["n_cramers"])
+    cat["cohens_w_interp"] = cat["cohens_w"].apply(interp_cramers)  # isti Cohen 1988 pragovi
+    cat = cat.rename(columns={"effect_value":  "cramers_v",
+                              "effect_interp": "cramers_v_interp"})
+    cat["promjena_interp"] = cat["cramers_v_interp"] != cat["cohens_w_interp"]
+    fixed_cols = ["varijabla", "test", "k_kat", "n_cramers", "statistika",
+                  "p_value", "znacajnost_005", "znacajnost_005_bonf",
+                  "cramers_v", "cramers_v_interp",
+                  "cohens_w", "cohens_w_interp", "promjena_interp"]
+    cat[fixed_cols].to_csv(OUT_CSV_FIXED, index=False, encoding="utf-8")
+    print(f"\nCohen's w (tablice >2x2): {len(cat)} testova -> {OUT_CSV_FIXED}")
+    print(f"  promjena interpretacije: {int(cat['promjena_interp'].sum())} / {len(cat)}")
 
 
 # ---------------------------------------------------------------------------
@@ -206,10 +266,13 @@ def main():
     # 13) coarse_fragments
     results.append(test_continuous("coarse_fragments", neo["coarse_fragments"], ctr["coarse_fragments"]))
 
-    # 14a-d) vtt_rN
+    # 14a-d) vtt_rN  (a priori: 4 dominantna tla + spojena 'rijetka_tla')
+    vtt_glavna = vtt_glavna_kategorije()
     for r in [100, 250, 500, 1000]:
         col = f"vtt_r{r}"
-        results.append(test_categorical_2samp(col, neo[col], ctr[col]))
+        neo_g = grupiraj_vtt(neo[col].dropna(), vtt_glavna)
+        ctr_g = grupiraj_vtt(ctr[col].dropna(), vtt_glavna)
+        results.append(test_categorical_2samp(col, neo_g, ctr_g))
 
     # 15a-d) sm_rN
     for r in [100, 250, 500, 1000]:
@@ -236,6 +299,8 @@ def main():
     out["p_bonferroni"]        = (out["p_value"] * n_tests).clip(upper=1.0)
     out["znacajnost_005"]      = out["p_value"]      < 0.05
     out["znacajnost_005_bonf"] = out["p_bonferroni"] < 0.05
+
+    write_cohens_w_fixed(out)
 
     col_order = [
         "varijabla", "tip", "test", "n_neolitik", "n_kontrola",

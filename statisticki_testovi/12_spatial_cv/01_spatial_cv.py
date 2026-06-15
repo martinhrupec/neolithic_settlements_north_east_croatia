@@ -329,3 +329,65 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+========================================================================
+SPATIAL CROSS-VALIDATION za OPTIMALNI_5
+========================================================================
+
+[1] Ucitavam podatke + koordinate...
+  n_merged = 548  (neolitik = 274, random_ceste = 274)
+
+[2] Ucitavam model: c:\Users\Martin\Desktop\skripte_za_diplomski\statisticki_testovi\10_random_forest\model_OPTIMALNI_5.joblib
+  set_name = OPTIMALNI_5
+  features = ['vtt_r100', 'rel_vis_100_250', 'dist_rijeka_korig', 'strahler', 'aps_vis']
+  nakon dropna: 548 (uklonjenо 0)
+
+[3] BASELINE random 5-fold CV (za usporedbu)...
+  baseline random 5-fold AUC = 0.7238
+
+[4] SPATIAL DIRECTIONAL SPLITS
+  median X = 655081   median Y = 5024592
+
+  Fold: trained_N_test_S
+    n_train = 274 (neo 134) | n_test = 274 (neo 140)
+    train AUC = 0.9997   test AUC = 0.6928   gap = +0.3069
+    test F1   = 0.6103   test acc = 0.6131
+
+  Fold: trained_S_test_N
+    n_train = 274 (neo 140) | n_test = 274 (neo 134)
+    train AUC = 0.9973   test AUC = 0.6378   gap = +0.3595
+    test F1   = 0.6048   test acc = 0.5803
+
+  Fold: trained_E_test_W
+    n_train = 274 (neo 155) | n_test = 274 (neo 119)
+    train AUC = 0.9926   test AUC = 0.6922   gap = +0.3004
+    test F1   = 0.6400   test acc = 0.6058
+
+  Fold: trained_W_test_E
+    n_train = 274 (neo 119) | n_test = 274 (neo 155)
+    train AUC = 0.9924   test AUC = 0.6965   gap = +0.2959
+    test F1   = 0.6084   test acc = 0.6241
+
+========================================================================
+SAZETAK
+========================================================================
+  Baseline random 5-fold AUC : 0.7238
+  Spatial mean AUC (4 fold)  : 0.6798 +- 0.0281
+  Spatial min AUC            : 0.6378  (trained_S_test_N)
+  Spatial max AUC            : 0.6965  (trained_W_test_E)
+  AUC pad (baseline - spatial): +0.0440
+
+[5] Crtam ROC krivulje...
+  -> spatial_cv_rocs.png
+
+[6] Crtam split mape...
+  -> spatial_cv_splits.png
+
+[7] -> spatial_cv_sazetak.txt
+
+========================================================================
+Spatial CV verdikt: STABILNO
+  Model dobro generalizira kroz geografiju. Random K-fold AUC je vjerodostojan i nije napuhan prostornom autokorelacijom.
+========================================================================
+'''

@@ -1,0 +1,49 @@
+﻿scenarij,varijabla,tip_testa,prilagodba,kategorije_celija,broj_celija,najmanja_ocekivana_frekvencija,broj_celija_ispod_1,broj_celija_ispod_5,postotak_celija_ispod_5,uvjet_a_nijedna_ispod_1,uvjet_b_max_20posto_ispod_5,oba_uvjeta_zadovoljena,p_value,znacajno_p005
+01_background,aspect_cat4,GoF (1-uzorak),-,NE | SE | SW | NW,4,13.839,0,0,0.0,DA,DA,DA,0.0004,DA
+01_background,aspect_ew,GoF (1-uzorak),-,E | W,2,29.264,0,0,0.0,DA,DA,DA,0.105679,NE
+01_background,aspect_sn,GoF (1-uzorak),-,N | S,2,28.72,0,0,0.0,DA,DA,DA,0.000224,DA
+01_background,vtt_r100,GoF (1-uzorak),vtt: 4 glavna + rijetka_tla,Gleysols | Cambisols | Luvisols | Fluvisols | rijetka_tla,5,3.737,0,1,20.0,DA,DA,DA,0.00033,DA
+01_background,vtt_r250,GoF (1-uzorak),vtt: 4 glavna + rijetka_tla,Gleysols | Cambisols | Luvisols | Fluvisols | rijetka_tla,5,3.737,0,1,20.0,DA,DA,DA,0.001123,DA
+01_background,vtt_r500,GoF (1-uzorak),vtt: 4 glavna + rijetka_tla,Gleysols | Cambisols | Luvisols | Fluvisols | rijetka_tla,5,3.737,0,1,20.0,DA,DA,DA,0.002429,DA
+01_background,vtt_r1000,GoF (1-uzorak),vtt: 4 glavna + rijetka_tla,Gleysols | Cambisols | Luvisols | Fluvisols | rijetka_tla,5,3.737,0,1,20.0,DA,DA,DA,0.001417,DA
+01_background,sm_r100,GoF (1-uzorak),-,Mocvarno | Suho,2,116.603,0,0,0.0,DA,DA,DA,0.000185,DA
+01_background,sm_r250,GoF (1-uzorak),-,Mocvarno | Suho,2,116.603,0,0,0.0,DA,DA,DA,0.000744,DA
+01_background,sm_r500,GoF (1-uzorak),-,Mocvarno | Suho,2,116.603,0,0,0.0,DA,DA,DA,0.003927,DA
+01_background,sm_r1000,GoF (1-uzorak),-,Mocvarno | Suho,2,116.603,0,0,0.0,DA,DA,DA,0.002646,DA
+01_background,strahler,GoF (1-uzorak),-,1 | 2 | 3 | 4 | 5 | 6 | 7,7,0.389,1,1,14.3,NE,DA,NE,2e-06,DA
+02_random_ceste,aspect_cat4,2-uzorkovni (2xk),-,NE | NW | SE | SW,8,9.339,0,0,0.0,DA,DA,DA,0.24578,NE
+02_random_ceste,aspect_ew,2-uzorkovni (2xk),-,E | W,4,23.593,0,0,0.0,DA,DA,DA,0.733923,NE
+02_random_ceste,aspect_sn,2-uzorkovni (2xk),-,N | S,4,21.136,0,0,0.0,DA,DA,DA,0.094937,NE
+02_random_ceste,vtt_r100,2-uzorkovni (2xk),vtt: 4 glavna + rijetka_tla,Cambisols | Fluvisols | Gleysols | Luvisols | rijetka_tla,10,5.5,0,0,0.0,DA,DA,DA,0.0,DA
+02_random_ceste,vtt_r250,2-uzorkovni (2xk),vtt: 4 glavna + rijetka_tla,Cambisols | Fluvisols | Gleysols | Luvisols | rijetka_tla,10,2.5,0,2,20.0,DA,DA,DA,0.0,DA
+02_random_ceste,vtt_r500,2-uzorkovni (2xk),vtt: 4 glavna + rijetka_tla,Cambisols | Fluvisols | Gleysols | Luvisols | rijetka_tla,10,2.0,0,2,20.0,DA,DA,DA,0.0,DA
+02_random_ceste,vtt_r1000,2-uzorkovni (2xk),vtt: 4 glavna + rijetka_tla,Cambisols | Fluvisols | Gleysols | Luvisols | rijetka_tla,10,1.5,0,2,20.0,DA,DA,DA,0.0,DA
+02_random_ceste,sm_r100,2-uzorkovni (2xk),-,Mocvarno | Suho,4,113.5,0,0,0.0,DA,DA,DA,3e-06,DA
+02_random_ceste,sm_r250,2-uzorkovni (2xk),-,Mocvarno | Suho,4,118.0,0,0,0.0,DA,DA,DA,1e-06,DA
+02_random_ceste,sm_r500,2-uzorkovni (2xk),-,Mocvarno | Suho,4,119.5,0,0,0.0,DA,DA,DA,7e-06,DA
+02_random_ceste,sm_r1000,2-uzorkovni (2xk),-,Mocvarno | Suho,4,122.5,0,0,0.0,DA,DA,DA,0.0,DA
+02_random_ceste,strahler,2-uzorkovni (2xk),-,1 | 2 | 3 | 4 | 6 | 7,12,8.0,0,0,0.0,DA,DA,DA,1.9e-05,DA
+04_rano_vs_kasno,aspect_cat4,2-uzorkovni (2xk),-,NE | NW | SE | SW,8,2.727,0,4,50.0,DA,NE,NE,0.499219,NE
+04_rano_vs_kasno,aspect_ew,2-uzorkovni (2xk),-,E | W,4,9.545,0,0,0.0,DA,DA,DA,1.0,NE
+04_rano_vs_kasno,aspect_sn,2-uzorkovni (2xk),-,N | S,4,6.364,0,0,0.0,DA,DA,DA,0.929368,NE
+04_rano_vs_kasno,vtt_r100,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,2.264,0,2,25.0,DA,NE,NE,0.924876,NE
+04_rano_vs_kasno,vtt_r250,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,2.641,0,2,25.0,DA,NE,NE,0.757348,NE
+04_rano_vs_kasno,vtt_r500,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,2.264,0,2,25.0,DA,NE,NE,0.706859,NE
+04_rano_vs_kasno,vtt_r1000,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,1.886,0,2,25.0,DA,NE,NE,0.591604,NE
+04_rano_vs_kasno,sm_r100,2-uzorkovni (2xk),-,Mocvarno | Suho,4,27.918,0,0,0.0,DA,DA,DA,0.863996,NE
+04_rano_vs_kasno,sm_r250,2-uzorkovni (2xk),-,Mocvarno | Suho,4,28.673,0,0,0.0,DA,DA,DA,0.808789,NE
+04_rano_vs_kasno,sm_r500,2-uzorkovni (2xk),-,Mocvarno | Suho,4,29.805,0,0,0.0,DA,DA,DA,0.504015,NE
+04_rano_vs_kasno,sm_r1000,2-uzorkovni (2xk),-,Mocvarno | Suho,4,29.05,0,0,0.0,DA,DA,DA,0.651258,NE
+04_rano_vs_kasno,strahler,2-uzorkovni (2xk),strahler: redovi >= 4 spojeni,1 | 2 | 3 | 4,8,10.941,0,0,0.0,DA,DA,DA,0.109417,NE
+06_jedno_vs_kont,aspect_cat4,2-uzorkovni (2xk),-,NE | NW | SE | SW,8,2.133,0,3,37.5,DA,NE,NE,0.080049,NE
+06_jedno_vs_kont,aspect_ew,2-uzorkovni (2xk),-,E | W,4,6.133,0,0,0.0,DA,DA,DA,0.029137,DA
+06_jedno_vs_kont,aspect_sn,2-uzorkovni (2xk),-,N | S,4,4.533,0,1,25.0,DA,NE,NE,0.503204,NE
+06_jedno_vs_kont,vtt_r100,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,1.38,0,1,12.5,DA,DA,DA,0.218471,NE
+06_jedno_vs_kont,vtt_r250,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,1.577,0,1,12.5,DA,DA,DA,0.228775,NE
+06_jedno_vs_kont,vtt_r500,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,1.577,0,1,12.5,DA,DA,DA,0.091844,NE
+06_jedno_vs_kont,vtt_r1000,2-uzorkovni (2xk),-,Cambisols | Fluvisols | Gleysols | Luvisols,8,1.38,0,1,12.5,DA,DA,DA,0.04608,DA
+06_jedno_vs_kont,sm_r100,2-uzorkovni (2xk),-,Mocvarno | Suho,4,16.949,0,0,0.0,DA,DA,DA,0.14541,NE
+06_jedno_vs_kont,sm_r250,2-uzorkovni (2xk),-,Mocvarno | Suho,4,17.54,0,0,0.0,DA,DA,DA,0.190132,NE
+06_jedno_vs_kont,sm_r500,2-uzorkovni (2xk),-,Mocvarno | Suho,4,18.328,0,0,0.0,DA,DA,DA,0.219486,NE
+06_jedno_vs_kont,sm_r1000,2-uzorkovni (2xk),-,Mocvarno | Suho,4,18.131,0,0,0.0,DA,DA,DA,0.397442,NE
+06_jedno_vs_kont,strahler,2-uzorkovni (2xk),-,1 | 2 | 3 | 4 | 6 | 7,12,1.577,0,3,25.0,DA,NE,NE,0.799557,NE
